@@ -98,13 +98,13 @@ export function DashboardPage({ initialData }: { initialData: DashboardPayload }
   const missRate = makes + misses === 0 ? 0 : (misses / (makes + misses)) * 100;
 
   return (
-    <main className="min-h-screen bg-[#050605] px-6 py-8 text-white">
+    <main className="min-h-screen bg-[#050505] px-6 py-8 text-white">
       <div className="mx-auto flex max-w-7xl flex-col gap-8">
         <header className="flex flex-col gap-6 border-b border-white/10 pb-8 md:flex-row md:items-start md:justify-between">
           <div>
             <div className="inline-flex items-center gap-4 rounded-[1.75rem] border border-white/15 bg-white/[0.06] px-4 py-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.18),0_18px_60px_rgba(0,0,0,0.35)] backdrop-blur-xl">
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-green-300/25 bg-green-500/12 shadow-[inset_0_1px_0_rgba(255,255,255,0.16),0_0_30px_rgba(34,197,94,0.18)]">
-                <div className="h-5 w-5 rounded-full border border-green-400/80" />
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-white/12 bg-white/[0.04] shadow-[inset_0_1px_0_rgba(255,255,255,0.14),0_12px_34px_rgba(0,0,0,0.28)]">
+                <img src="/basketball-logo.svg" alt="Basketball" className="h-9 w-9" />
               </div>
               <div>
                 <h1 className="text-3xl font-semibold tracking-tight">Hoops Analytics</h1>
