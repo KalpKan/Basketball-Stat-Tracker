@@ -20,6 +20,22 @@ interface ShotEventPayload {
   sessionTitle?: string | null;
 }
 
+function getUtcDayRange(isoTimestamp: string) {
+  const capturedDate = new Date(isoTimestamp);
+  const start = new Date(Date.UTC(
+    capturedDate.getUTCFullYear(),
+    capturedDate.getUTCMonth(),
+    capturedDate.getUTCDate()
+  ));
+  const end = new Date(start);
+  end.setUTCDate(end.getUTCDate() + 1);
+
+  return {
+    start: start.toISOString(),
+    end: end.toISOString()
+  };
+}
+
 Deno.serve(async request => {
   if (request.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
@@ -74,16 +90,23 @@ Deno.serve(async request => {
   }
 
   const supabase = createClient(supabaseUrl, supabaseServiceRoleKey);
+  const dayRange = getUtcDayRange(body.capturedAt);
   const { data: existingSession, error: existingSessionError } = await supabase
     .from("sessions")
     .select("id")
-    .eq("id", body.sessionId)
+    .eq("device_id", body.deviceId)
+    .gte("started_at", dayRange.start)
+    .lt("started_at", dayRange.end)
+    .order("started_at", { ascending: true })
+    .order("id", { ascending: true })
+    .limit(1)
     .maybeSingle();
 
   if (existingSessionError) {
     return Response.json({ error: existingSessionError.message }, { status: 400, headers: corsHeaders });
   }
 
+  const resolvedSessionId = existingSession?.id ?? body.sessionId;
   const { error: sessionError } = existingSession
     ? await supabase
         .from("sessions")
@@ -91,9 +114,9 @@ Deno.serve(async request => {
           device_id: body.deviceId,
           updated_at: new Date().toISOString()
         })
-        .eq("id", body.sessionId)
+        .eq("id", resolvedSessionId)
     : await supabase.from("sessions").insert({
-        id: body.sessionId,
+        id: resolvedSessionId,
         device_id: body.deviceId,
         title: body.sessionTitle ?? null,
         started_at: body.capturedAt,
@@ -111,7 +134,7 @@ Deno.serve(async request => {
         title: body.sessionTitle,
         updated_at: new Date().toISOString()
       })
-      .eq("id", body.sessionId);
+      .eq("id", resolvedSessionId);
 
     if (sessionTitleError) {
       return Response.json({ error: sessionTitleError.message }, { status: 400, headers: corsHeaders });
@@ -120,7 +143,7 @@ Deno.serve(async request => {
 
   const { error } = await supabase.from("shot_events").upsert({
     id: body.id,
-    session_id: body.sessionId,
+    session_id: resolvedSessionId,
     captured_at: body.capturedAt,
     result: body.result,
     x: body.x,

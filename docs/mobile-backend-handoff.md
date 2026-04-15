@@ -10,6 +10,7 @@ This document is for the iPhone app implementation agent. It describes the live 
 - Auth strategy: shared ingest API key in header `x-device-api-key`
 - Backend is live and expects structured shot events from the phone
 - Backend does not expect video, images, or frame uploads in v1
+- Backend resolves all events from the same `deviceId` and UTC calendar day into one canonical session
 
 ## Required request
 
@@ -86,7 +87,8 @@ Body:
 
 ## Backend behavior the app should rely on
 
-- The backend creates the session row on the first accepted event for a new `sessionId`
+- The backend creates the daily session row on the first accepted event for a new `deviceId` + UTC day
+- If the app sends a new `sessionId` for later shots on the same UTC day, the backend stores those shots under the existing daily session
 - The backend preserves the original `started_at` from the first event
 - Re-sending the same event `id` is safe
 - Invalid coordinates, confidence, timestamps, or result values are rejected

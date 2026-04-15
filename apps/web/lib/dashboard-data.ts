@@ -63,6 +63,10 @@ function formatSessionLabel(dateValue: string) {
   }).format(new Date(dateValue));
 }
 
+function getUtcDateKey(dateValue: string) {
+  return dateValue.slice(0, 10);
+}
+
 function buildProgress(sessions: SessionSummary[]): DashboardProgressPoint[] {
   return sessions
     .slice()
@@ -73,6 +77,42 @@ function buildProgress(sessions: SessionSummary[]): DashboardProgressPoint[] {
       efgPercent: session.efgPercent,
       streak: session.bestStreak
     }));
+}
+
+function buildDailySessions(sessions: SessionSummary[]): SessionSummary[] {
+  const sessionsByDay = new Map<string, SessionSummary>();
+
+  for (const session of sessions) {
+    const dateKey = getUtcDateKey(session.startedAt);
+    const existing = sessionsByDay.get(dateKey);
+
+    if (!existing) {
+      sessionsByDay.set(dateKey, {
+        ...session,
+        sessionId: `day-${dateKey}`
+      });
+      continue;
+    }
+
+    const attempts = existing.attempts + session.attempts;
+    const made = existing.made + session.made;
+    const missed = existing.missed + session.missed;
+    const swishMakes = (existing.swishRate / 100) * existing.made + (session.swishRate / 100) * session.made;
+
+    sessionsByDay.set(dateKey, {
+      ...existing,
+      lastShotAt: [existing.lastShotAt, session.lastShotAt].filter(Boolean).sort().at(-1) ?? null,
+      attempts,
+      made,
+      missed,
+      fgPercent: attempts === 0 ? 0 : Number(((made / attempts) * 100).toFixed(1)),
+      efgPercent: attempts === 0 ? 0 : Number((((made + swishMakes * 0.5) / attempts) * 100).toFixed(1)),
+      swishRate: made === 0 ? 0 : Number(((swishMakes / made) * 100).toFixed(1)),
+      bestStreak: Math.max(existing.bestStreak, session.bestStreak)
+    });
+  }
+
+  return Array.from(sessionsByDay.values()).sort((left, right) => right.startedAt.localeCompare(left.startedAt));
 }
 
 function buildMockPayload(): DashboardPayload {
@@ -132,7 +172,7 @@ export async function getDashboardPayload(): Promise<DashboardPayload> {
     return buildMockPayload();
   }
 
-  const sessions: SessionSummary[] = sessionsRows
+  const rawSessions: SessionSummary[] = sessionsRows
     .filter(row => row.session_id && row.device_id && row.started_at)
     .map(row => ({
       sessionId: row.session_id as string,
@@ -147,15 +187,12 @@ export async function getDashboardPayload(): Promise<DashboardPayload> {
       swishRate: row.swish_rate ?? 0,
       bestStreak: row.best_streak ?? 0
     }));
+  const sessionIdToDayId = new Map(
+    rawSessions.map(session => [session.sessionId, `day-${getUtcDateKey(session.startedAt)}`])
+  );
+  const sessions = buildDailySessions(rawSessions);
 
-  const progress: DashboardProgressPoint[] = progressRows
-    .filter(row => row.started_at)
-    .map(row => ({
-      label: formatSessionLabel(row.started_at as string),
-      fgPercent: row.fg_percent ?? 0,
-      efgPercent: row.efg_percent ?? 0,
-      streak: row.best_streak ?? 0
-    }));
+  const progress = buildProgress(sessions);
 
   const shotMap: ShotEvent[] = shotRows
     .filter(
@@ -167,7 +204,7 @@ export async function getDashboardPayload(): Promise<DashboardPayload> {
     )
     .map(row => ({
       id: row.id as string,
-      sessionId: row.session_id as string,
+      sessionId: sessionIdToDayId.get(row.session_id as string) ?? row.session_id as string,
       capturedAt: row.captured_at as string,
       result: row.result as ShotEvent["result"],
       x: row.x ?? 0,
