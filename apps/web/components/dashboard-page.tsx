@@ -98,12 +98,12 @@ export function DashboardPage({ initialData }: { initialData: DashboardPayload }
   const missRate = makes + misses === 0 ? 0 : (misses / (makes + misses)) * 100;
 
   return (
-    <main className="min-h-screen bg-[radial-gradient(circle_at_top_left,_rgba(35,197,82,0.18),_transparent_18%),linear-gradient(180deg,_#060606,_#040404)] px-6 py-8 text-white">
+    <main className="min-h-screen bg-[#050605] px-6 py-8 text-white">
       <div className="mx-auto flex max-w-7xl flex-col gap-8">
         <header className="flex flex-col gap-6 border-b border-white/10 pb-8 md:flex-row md:items-start md:justify-between">
           <div>
-            <div className="flex items-center gap-4">
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-green-500/15 shadow-[0_0_40px_rgba(35,197,82,0.25)] ring-1 ring-green-500/30">
+            <div className="inline-flex items-center gap-4 rounded-[1.75rem] border border-white/15 bg-white/[0.06] px-4 py-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.18),0_18px_60px_rgba(0,0,0,0.35)] backdrop-blur-xl">
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-green-300/25 bg-green-500/12 shadow-[inset_0_1px_0_rgba(255,255,255,0.16),0_0_30px_rgba(34,197,94,0.18)]">
                 <div className="h-5 w-5 rounded-full border border-green-400/80" />
               </div>
               <div>
@@ -122,7 +122,7 @@ export function DashboardPage({ initialData }: { initialData: DashboardPayload }
           </div>
           <div className="space-y-2 text-right">
             <div className="text-sm text-white/40">{data.totalShotsRecorded} shots recorded</div>
-            <div className="text-xs uppercase tracking-[0.22em] text-white/25">{data.source} data</div>
+            <LiveDataLabel source={data.source} />
           </div>
         </header>
 
@@ -233,6 +233,22 @@ export function DashboardPage({ initialData }: { initialData: DashboardPayload }
   );
 }
 
+function LiveDataLabel({ source }: { source: DashboardPayload["source"] }) {
+  const isLive = source === "live";
+
+  return (
+    <div className="inline-flex items-center justify-end gap-2 rounded-full border border-white/10 bg-white/[0.04] px-3 py-2 text-xs uppercase tracking-[0.22em] text-white/35 shadow-[inset_0_1px_0_rgba(255,255,255,0.12)] backdrop-blur-xl">
+      {isLive ? (
+        <span className="relative flex h-2.5 w-2.5" aria-label="Live">
+          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-500 opacity-70" />
+          <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-red-500 shadow-[0_0_12px_rgba(239,68,68,0.8)]" />
+        </span>
+      ) : null}
+      <span>{source} data</span>
+    </div>
+  );
+}
+
 function TabButton({
   active,
   onClick,
@@ -246,10 +262,10 @@ function TabButton({
     <button
       type="button"
       onClick={onClick}
-      className={`rounded-full px-5 py-3 text-sm ring-1 transition ${
+      className={`rounded-full border px-5 py-3 text-sm shadow-[inset_0_1px_0_rgba(255,255,255,0.16),0_12px_40px_rgba(0,0,0,0.24)] backdrop-blur-xl transition ${
         active
-          ? "bg-green-500/20 text-green-400 ring-green-500/40"
-          : "bg-white/5 text-white/60 ring-white/10"
+          ? "border-green-300/30 bg-green-500/18 text-green-300"
+          : "border-white/10 bg-white/[0.06] text-white/60"
       }`}
     >
       {children}
@@ -270,10 +286,10 @@ function FilterPill({
     <button
       type="button"
       onClick={onClick}
-      className={`whitespace-nowrap rounded-full px-5 py-3 text-sm ring-1 transition ${
+      className={`whitespace-nowrap rounded-full border px-5 py-3 text-sm shadow-[inset_0_1px_0_rgba(255,255,255,0.16),0_14px_42px_rgba(0,0,0,0.28)] backdrop-blur-xl transition ${
         active
-          ? "bg-green-500 text-black ring-green-500"
-          : "bg-white/5 text-white/70 ring-white/10"
+          ? "border-green-300/35 bg-green-400/85 text-black"
+          : "border-white/10 bg-white/[0.06] text-white/70"
       }`}
     >
       {label}
@@ -338,7 +354,7 @@ function ProgressChart({
   const maxValue = Math.max(...values, 1);
 
   return (
-    <div className="h-72 rounded-2xl border border-dashed border-white/10 bg-gradient-to-b from-green-500/10 to-transparent p-6">
+    <div className="h-72 rounded-2xl border border-dashed border-white/10 bg-white/[0.025] p-6">
       <div className="flex h-full items-end gap-4">
         {points.map(point => {
           const value = getChartValue(point, mode);
