@@ -79,6 +79,38 @@ function buildProgress(sessions: SessionSummary[]): DashboardProgressPoint[] {
     }));
 }
 
+function calculateBestMakeStreak(shots: ShotEvent[]) {
+  let bestStreak = 0;
+  let currentStreak = 0;
+
+  for (const shot of shots.slice().sort((left, right) => left.capturedAt.localeCompare(right.capturedAt))) {
+    if (shot.result === "made") {
+      currentStreak += 1;
+      bestStreak = Math.max(bestStreak, currentStreak);
+      continue;
+    }
+
+    currentStreak = 0;
+  }
+
+  return bestStreak;
+}
+
+function buildDailyStreaks(shots: ShotEvent[]) {
+  const shotsBySession = new Map<string, ShotEvent[]>();
+
+  for (const shot of shots) {
+    shotsBySession.set(shot.sessionId, [...(shotsBySession.get(shot.sessionId) ?? []), shot]);
+  }
+
+  return new Map(
+    Array.from(shotsBySession.entries()).map(([sessionId, sessionShots]) => [
+      sessionId,
+      calculateBestMakeStreak(sessionShots)
+    ])
+  );
+}
+
 function buildDailySessions(sessions: SessionSummary[]): SessionSummary[] {
   const sessionsByDay = new Map<string, SessionSummary>();
 
@@ -150,23 +182,19 @@ export async function getDashboardPayload(): Promise<DashboardPayload> {
   const [
     { data: overviewRows, error: overviewError },
     { data: sessionsRows, error: sessionsError },
-    { data: progressRows, error: progressError },
     { data: shotRows, error: shotError }
   ] = await Promise.all([
     supabase.from("overall_analytics").select("*").limit(1),
     supabase.from("session_summaries").select("*").order("started_at", { ascending: false }).limit(12),
-    supabase.from("progress_over_time").select("*").order("started_at", { ascending: true }).limit(24),
-    supabase.from("shot_map_points").select("*").order("captured_at", { ascending: false }).limit(200)
+    supabase.from("shot_map_points").select("*").order("captured_at", { ascending: false }).limit(1000)
   ]);
 
   if (
     overviewError ||
     sessionsError ||
-    progressError ||
     shotError ||
     !overviewRows ||
     !sessionsRows ||
-    !progressRows ||
     !shotRows
   ) {
     return buildMockPayload();
@@ -190,9 +218,6 @@ export async function getDashboardPayload(): Promise<DashboardPayload> {
   const sessionIdToDayId = new Map(
     rawSessions.map(session => [session.sessionId, `day-${getUtcDateKey(session.startedAt)}`])
   );
-  const sessions = buildDailySessions(rawSessions);
-
-  const progress = buildProgress(sessions);
 
   const shotMap: ShotEvent[] = shotRows
     .filter(
@@ -204,7 +229,7 @@ export async function getDashboardPayload(): Promise<DashboardPayload> {
     )
     .map(row => ({
       id: row.id as string,
-      sessionId: sessionIdToDayId.get(row.session_id as string) ?? row.session_id as string,
+      sessionId: sessionIdToDayId.get(row.session_id as string) ?? (row.session_id as string),
       capturedAt: row.captured_at as string,
       result: row.result as ShotEvent["result"],
       x: row.x ?? 0,
@@ -214,6 +239,16 @@ export async function getDashboardPayload(): Promise<DashboardPayload> {
       swish: row.swish
     }));
 
+  const dailyStreaks = buildDailyStreaks(shotMap);
+  const sessions = buildDailySessions(rawSessions).map(session => ({
+    ...session,
+    bestStreak: dailyStreaks.get(session.sessionId) ?? session.bestStreak
+  }));
+  const progress = buildProgress(sessions);
+  const avgStreak =
+    sessions.length === 0
+      ? overviewRows[0]?.avg_streak ?? 0
+      : Number((sessions.reduce((sum, session) => sum + session.bestStreak, 0) / sessions.length).toFixed(1));
   const overviewRow = overviewRows[0];
 
   return {
@@ -223,7 +258,7 @@ export async function getDashboardPayload(): Promise<DashboardPayload> {
       missed: overviewRow?.missed ?? 0,
       fgPercent: overviewRow?.fg_percent ?? 0,
       consistency: overviewRow?.consistency ?? 0,
-      avgStreak: overviewRow?.avg_streak ?? 0,
+      avgStreak,
       swishRate: overviewRow?.swish_rate ?? 0
     },
     sessions,
