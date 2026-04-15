@@ -9,6 +9,7 @@ build
 .vercel
 .turbo
 .tools
+*.tsbuildinfo
 coverage
 DerivedData
 *.xcuserstate
