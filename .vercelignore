@@ -1,0 +1,11 @@
+.tools
+node_modules
+**/node_modules
+.next
+**/.next
+.turbo
+coverage
+DerivedData
+apps/mobile
+.git
+.DS_Store

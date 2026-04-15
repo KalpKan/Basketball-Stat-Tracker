@@ -1,0 +1,7 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "pnpm --filter @basketball-stat-tracker/web build",
+  "installCommand": "pnpm install --frozen-lockfile",
+  "framework": "nextjs"
+}
+
