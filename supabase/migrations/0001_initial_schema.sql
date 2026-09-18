@@ -1,6 +1,14 @@
+-- Basketball lives in the "hoops" schema of the shared Supabase Project B ("platform").
+-- One Postgres schema per app; never use public here (see portfolio docs/hosting-plan.md section 6).
+create schema if not exists hoops;
+grant usage on schema hoops to anon, authenticated, service_role;
+alter default privileges in schema hoops grant all on tables to anon, authenticated, service_role;
+alter default privileges in schema hoops grant all on sequences to anon, authenticated, service_role;
+alter default privileges in schema hoops grant all on functions to anon, authenticated, service_role;
+
 create extension if not exists "pgcrypto";
 
-create table if not exists public.sessions (
+create table if not exists hoops.sessions (
   id uuid primary key default gen_random_uuid(),
   device_id text not null,
   started_at timestamptz not null default now(),
@@ -10,9 +18,9 @@ create table if not exists public.sessions (
   updated_at timestamptz not null default now()
 );
 
-create table if not exists public.shot_events (
+create table if not exists hoops.shot_events (
   id uuid primary key default gen_random_uuid(),
-  session_id uuid not null references public.sessions(id) on delete cascade,
+  session_id uuid not null references hoops.sessions(id) on delete cascade,
   captured_at timestamptz not null default now(),
   result text not null check (result in ('made', 'missed')),
   x double precision not null check (x >= 0 and x <= 1),
@@ -23,9 +31,12 @@ create table if not exists public.shot_events (
   created_at timestamptz not null default now()
 );
 
-create unique index if not exists sessions_device_id_id_idx on public.sessions(device_id, id);
-create index if not exists shot_events_session_id_idx on public.shot_events(session_id);
-create index if not exists shot_events_captured_at_idx on public.shot_events(captured_at desc);
+create unique index if not exists sessions_device_id_id_idx on hoops.sessions(device_id, id);
+create index if not exists shot_events_session_id_idx on hoops.shot_events(session_id);
+create index if not exists shot_events_captured_at_idx on hoops.shot_events(captured_at desc);
 
-alter table public.sessions enable row level security;
-alter table public.shot_events enable row level security;
+alter table hoops.sessions enable row level security;
+alter table hoops.shot_events enable row level security;
+
+grant all on all tables in schema hoops to anon, authenticated, service_role;
+grant all on all sequences in schema hoops to anon, authenticated, service_role;

@@ -1,4 +1,4 @@
-create or replace view public.session_streaks as
+create or replace view hoops.session_streaks as
 with ordered_events as (
   select
     session_id,
@@ -6,7 +6,7 @@ with ordered_events as (
     result,
     row_number() over (partition by session_id order by captured_at, id) as event_index,
     row_number() over (partition by session_id, result order by captured_at, id) as result_index
-  from public.shot_events
+  from hoops.shot_events
 ),
 grouped_makes as (
   select
@@ -28,7 +28,7 @@ select
 from aggregated
 group by session_id;
 
-create or replace view public.session_summaries as
+create or replace view hoops.session_summaries as
 select
   s.id as session_id,
   s.device_id,
@@ -62,14 +62,14 @@ select
     1
   ) as swish_rate,
   coalesce(ss.best_streak, 0) as best_streak
-from public.sessions s
-left join public.shot_events se on se.session_id = s.id
-left join public.session_streaks ss on ss.session_id = s.id
+from hoops.sessions s
+left join hoops.shot_events se on se.session_id = s.id
+left join hoops.session_streaks ss on ss.session_id = s.id
 group by s.id, s.device_id, s.started_at, ss.best_streak;
 
-create or replace view public.overall_analytics as
+create or replace view hoops.overall_analytics as
 with session_fg as (
-  select fg_percent from public.session_summaries where attempts > 0
+  select fg_percent from hoops.session_summaries where attempts > 0
 )
 select
   count(se.id)::integer as attempts,
@@ -90,7 +90,7 @@ select
     1
   ) as swish_rate,
   round(
-    coalesce((select avg(best_streak)::numeric from public.session_summaries where attempts > 0), 0),
+    coalesce((select avg(best_streak)::numeric from hoops.session_summaries where attempts > 0), 0),
     1
   ) as avg_streak,
   round(
@@ -103,4 +103,4 @@ select
     )::numeric,
     1
   ) as consistency
-from public.shot_events se;
+from hoops.shot_events se;

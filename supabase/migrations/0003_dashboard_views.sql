@@ -1,4 +1,4 @@
-create or replace view public.progress_over_time as
+create or replace view hoops.progress_over_time as
 select
   session_id,
   started_at,
@@ -8,10 +8,10 @@ select
   fg_percent,
   efg_percent,
   best_streak
-from public.session_summaries
+from hoops.session_summaries
 where attempts > 0;
 
-create or replace view public.shot_map_points as
+create or replace view hoops.shot_map_points as
 select
   id,
   session_id,
@@ -22,4 +22,4 @@ select
   confidence,
   frame_id,
   swish
-from public.shot_events;
+from hoops.shot_events;
