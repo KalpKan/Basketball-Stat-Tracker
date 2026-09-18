@@ -89,7 +89,8 @@ Deno.serve(async request => {
     return Response.json({ error: "Unauthorized" }, { status: 401, headers: corsHeaders });
   }
 
-  const supabase = createClient(supabaseUrl, supabaseServiceRoleKey);
+  // Basketball lives in the "hoops" schema of the shared Supabase Project B.
+  const supabase = createClient(supabaseUrl, supabaseServiceRoleKey, { db: { schema: "hoops" } });
   const dayRange = getUtcDayRange(body.capturedAt);
   const { data: existingSession, error: existingSessionError } = await supabase
     .from("sessions")
@@ -170,5 +171,31 @@ Deno.serve(async request => {
     return Response.json({ error: storedEventError.message }, { status: 400, headers: corsHeaders });
   }
 
+  captureShotIngested(storedEvent).catch(() => undefined);
+
   return Response.json({ accepted: true, event: storedEvent }, { status: 200, headers: corsHeaders });
 });
+
+// PostHog custom event for the app's core action (see portfolio docs/analytics.md).
+// Optional: only sends when POSTHOG_KEY is set as a function secret; never blocks the response.
+async function captureShotIngested(event: { id: string; session_id: string; result: string; swish: boolean | null }) {
+  const key = Deno.env.get("POSTHOG_KEY");
+  if (!key) return;
+  const host = Deno.env.get("POSTHOG_HOST") ?? "https://us.i.posthog.com";
+  await fetch(`${host}/i/v0/e/`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({
+      api_key: key,
+      event: "shot_ingested",
+      distinct_id: "hoops-ingest-shot",
+      properties: {
+        $host: "hoops.kalpkan.com",
+        session_id: event.session_id,
+        result: event.result,
+        swish: event.swish ?? false,
+        $process_person_profile: false
+      }
+    })
+  });
+}

@@ -14,3 +14,4 @@ coverage
 DerivedData
 *.xcuserstate
 *.swp
+supabase/.temp

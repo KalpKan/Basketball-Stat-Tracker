@@ -2,6 +2,8 @@
 
 import { useEffect, useMemo, useState } from "react";
 import type { ReactNode } from "react";
+import { DemoDataBanner } from "./demo-data-banner";
+import { capture } from "../lib/posthog";
 import type { DashboardPayload, DashboardProgressPoint, ShotEvent } from "../lib/contracts";
 
 type TabKey = "shot-map" | "analytics";
@@ -126,18 +128,26 @@ export function DashboardPage({ initialData }: { initialData: DashboardPayload }
           </div>
         </header>
 
+        <DemoDataBanner source={data.source} />
+
         <section className="flex gap-3 overflow-x-auto pb-2">
           <FilterPill
             active={selectedSessionId === "all"}
             label="All Sessions"
-            onClick={() => setSelectedSessionId("all")}
+            onClick={() => {
+              setSelectedSessionId("all");
+              capture("session_viewed", { session: "all" });
+            }}
           />
           {data.sessions.map(session => (
             <FilterPill
               key={session.sessionId}
               active={selectedSessionId === session.sessionId}
               label={formatPillLabel(session.startedAt)}
-              onClick={() => setSelectedSessionId(session.sessionId)}
+              onClick={() => {
+                setSelectedSessionId(session.sessionId);
+                capture("session_viewed", { session: session.sessionId, attempts: session.attempts });
+              }}
             />
           ))}
         </section>

@@ -14,3 +14,11 @@ enabled = true
 enabled = true
 port = 54323
 
+
+# Edge Functions. verify_jwt = false so the phone app (shared ingest key) and
+# the UptimeRobot keep-alive ping can call them without a Supabase JWT.
+[functions.hoops-ingest-shot]
+verify_jwt = false
+
+[functions.health]
+verify_jwt = false

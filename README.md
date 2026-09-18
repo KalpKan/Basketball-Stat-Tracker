@@ -1,12 +1,15 @@
 # Basketball Stat Tracker
 
-Hoops Analytics is a personal iPhone-first basketball shooting tracker.
+Hoops Analytics is a personal basketball shooting tracker: a web dashboard (live at
+https://hoops.kalpkan.com) that shows shot maps, session stats and progress, fed by a
+Supabase backend. The iPhone capture app is a **stub** (two SwiftUI files, no working
+capture yet); today shots reach the backend through the ingest API described below.
 
 ## Repo layout
 
-- `apps/mobile` - iPhone app built with SwiftUI, AVFoundation, and Vision/Core ML
+- `apps/mobile` - iPhone app stub (SwiftUI). Planned, not functional yet
 - `apps/web` - Next.js dashboard for Vercel
-- `supabase` - database schema, policies, and Edge Functions
+- `supabase` - database schema (the `hoops` schema in the shared Supabase project "platform"), policies, and Edge Functions
 - `packages/contracts` - shared TypeScript event contracts and generated types
 
 ## Product direction
@@ -17,9 +20,10 @@ Hoops Analytics is a personal iPhone-first basketball shooting tracker.
 
 ## Data pipeline
 
-- iPhone app sends structured shot events to the Supabase Edge Function at `/functions/v1/ingest-shot`
+- A client (the future iPhone app, or any script) sends structured shot events to the Supabase Edge Function at `/functions/v1/hoops-ingest-shot`
 - The Edge Function validates the payload, verifies `x-device-api-key`, upserts the session row, and inserts the shot event idempotently by client event `id`
-- Supabase stores raw events in `shot_events` and computes dashboard-friendly metrics through SQL views
+- Supabase stores raw events in `hoops.shot_events` and computes dashboard-friendly metrics through SQL views in the `hoops` schema
+- The dashboard shows a yellow "Demo data" banner (with built-in sample shots) only when the Supabase settings are missing
 - The Next.js dashboard reads those analytics through a server-side API route and refreshes every 5 seconds
 
 ## Backend notes
@@ -37,8 +41,47 @@ Hoops Analytics is a personal iPhone-first basketball shooting tracker.
 - `SUPABASE_SERVICE_ROLE_KEY`
 - `INGEST_API_KEY`
 
-For the Supabase Edge Function, set `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, and
-`INGEST_API_KEY` as project secrets in Supabase in addition to any local `.env` usage.
+Plus `NEXT_PUBLIC_POSTHOG_KEY` and `NEXT_PUBLIC_POSTHOG_HOST` for analytics. Names are listed in
+`.env.example`; never commit values. For the Edge Functions, `INGEST_API_KEY` (and optionally
+`POSTHOG_KEY`) are Supabase Edge Function secrets; `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY`
+are injected by Supabase automatically.
+
+## How to run this / How to deploy this / Where the settings live
+
+Written for a non-developer. You should not normally need any of this: the site deploys
+itself and the settings are already in place.
+
+**How to run this on your computer**
+
+1. Install Node.js (version 22) from nodejs.org.
+2. Open Terminal, go to this folder, and run `npx pnpm install`.
+3. Run `npx pnpm --filter @basketball-stat-tracker/web dev` and open http://localhost:3000.
+   Without a `.env` file you will see the "Demo data" banner and sample shots, which is fine.
+4. To run the tests: `npx pnpm test`.
+
+**How to deploy this**
+
+- Every push to the `main` branch on GitHub redeploys the dashboard on Vercel
+  (project `v0-basketball-analytics-dashboard`, team "Kk's projects"). Nothing to click.
+- To deploy by hand: `npx vercel --prod --yes` from this folder.
+- The database and the two Edge Functions live in Supabase Project B ("platform"), schema
+  `hoops`. To change the database, add a new numbered file in `supabase/migrations/` and
+  apply it (an agent does this with the portfolio-ops runbook "Add a schema to Supabase
+  Project B"). To redeploy a function: `npx supabase functions deploy hoops-ingest-shot`
+  (or `health`) with your Supabase access token in the shell.
+
+**Where the settings live**
+
+| Setting | Where |
+|---|---|
+| `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `INGEST_API_KEY`, `NEXT_PUBLIC_POSTHOG_KEY`, `NEXT_PUBLIC_POSTHOG_HOST` | Vercel -> project `v0-basketball-analytics-dashboard` -> Settings -> Environment Variables |
+| `INGEST_API_KEY`, `POSTHOG_KEY` (for the Edge Functions) | Supabase -> project "platform" -> Edge Functions -> Secrets |
+| Database tables and views | Supabase -> project "platform" -> Table Editor, schema `hoops` |
+| Domain `hoops.kalpkan.com` | Cloudflare DNS (record) and Vercel project Settings -> Domains |
+| Uptime and keep-alive monitors | UptimeRobot, status page https://stats.uptimerobot.com/a6n3Wx3PBp |
+
+The full operating manual for all of Kalp's sites is the `portfolio-ops` skill in the
+`KalpKan/portfolio` repo (`skills/portfolio-ops/`).
 
 ## Mobile ingest payload
 

@@ -4,9 +4,8 @@ This document is for the iPhone app implementation agent. It describes the live 
 
 ## Live backend summary
 
-- Supabase project ref: `yzppfufqaekgaxcrsqxp`
-- Base URL: `https://yzppfufqaekgaxcrsqxp.supabase.co`
-- Ingest endpoint: `POST /functions/v1/ingest-shot`
+- Supabase: Project B "platform" (shared; this app uses the `hoops` schema). The project ref and base URL are in the Vercel env var `SUPABASE_URL`
+- Ingest endpoint: `POST /functions/v1/hoops-ingest-shot`
 - Auth strategy: shared ingest API key in header `x-device-api-key`
 - Backend is live and expects structured shot events from the phone
 - Backend does not expect video, images, or frame uploads in v1
@@ -17,7 +16,7 @@ This document is for the iPhone app implementation agent. It describes the live 
 Endpoint:
 
 ```text
-POST https://yzppfufqaekgaxcrsqxp.supabase.co/functions/v1/ingest-shot
+POST <SUPABASE_URL>/functions/v1/hoops-ingest-shot
 ```
 
 Headers:
@@ -109,7 +108,7 @@ Body:
 2. Keep one stable `deviceId` for the installation or chosen local device identity.
 3. For every accepted inferred shot, generate a unique event `id`.
 4. Build the payload exactly in the backend contract shape.
-5. `POST` it to `/functions/v1/ingest-shot`.
+5. `POST` it to `/functions/v1/hoops-ingest-shot`.
 6. If the request fails for transport reasons, retry the same payload with the same `id`.
 7. If the request returns a non-2xx validation error, do not mutate the payload and do not generate a new `id` for the same event unless the app intentionally treats it as a new event.
 
@@ -121,7 +120,7 @@ Goal:
 
 - user taps anywhere on a debug shot canvas in the app
 - app converts tap location into normalized `x` and `y`
-- app sends a synthetic shot event to the real `ingest-shot` function
+- app sends a synthetic shot event to the real `hoops-ingest-shot` function
 - web dashboard should then show the event in the live shot map and aggregate metrics
 
 ### Why this is the right test
@@ -270,9 +269,9 @@ Expected aggregate result for that synthetic session:
 
 ## Backend read models the dashboard already uses
 
-- `public.session_summaries`
-- `public.overall_analytics`
-- `public.progress_over_time`
-- `public.shot_map_points`
+- `hoops.session_summaries`
+- `hoops.overall_analytics`
+- `hoops.progress_over_time`
+- `hoops.shot_map_points`
 
 No extra backend work is required for the synthetic tap test beyond calling the existing ingest route with synthetic data.

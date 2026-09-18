@@ -4,28 +4,31 @@ This project reads Supabase credentials from runtime environment variables. Do n
 
 ## Vercel project
 
-- Team: `team_COuL6hLftYDdKidApgwbIQIK`
+- Team: "Kk's projects" (`kks-projects-2edcb11a`)
 - Project: `v0-basketball-analytics-dashboard`
-- Project ID: `prj_TyWdF7mKO4HtX41CGYQZvf4hrFYE`
+- Live URL: https://hoops.kalpkan.com
 
 ## Required Vercel env vars
 
 Add these to the Vercel project for Production, Preview, and Development unless intentionally separating environments:
 
 - `SUPABASE_URL`
+- `SUPABASE_ANON_KEY`
 - `SUPABASE_SERVICE_ROLE_KEY`
+- `INGEST_API_KEY`
+- `NEXT_PUBLIC_POSTHOG_KEY`, `NEXT_PUBLIC_POSTHOG_HOST`
 
-The web dashboard uses `SUPABASE_SERVICE_ROLE_KEY` only on the server side through Next.js route handlers and server components. Never expose it with a `NEXT_PUBLIC_` prefix.
+The Supabase values come from Supabase Project B ("platform"), the shared project whose
+`hoops` schema holds this app's tables. The web dashboard uses `SUPABASE_SERVICE_ROLE_KEY` only on the server side through Next.js route handlers and server components. Never expose it with a `NEXT_PUBLIC_` prefix.
 
 The dashboard also accepts `service_role_key` as a fallback for compatibility with Supabase's label naming, but `SUPABASE_SERVICE_ROLE_KEY` is preferred because it is explicit and conventional.
 
 ## Required Supabase Edge Function secrets
 
-Set these as secrets for the `ingest-shot` Edge Function:
+Set this as a secret for the `hoops-ingest-shot` Edge Function (`SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` are injected by Supabase automatically):
 
-- `SUPABASE_URL`
-- `SUPABASE_SERVICE_ROLE_KEY`
 - `INGEST_API_KEY`
+- `POSTHOG_KEY` (optional, for the `shot_ingested` analytics event)
 
 The phone app sends `INGEST_API_KEY` in the `x-device-api-key` header when posting shot events. Do not expose `SUPABASE_SERVICE_ROLE_KEY` to the phone app.
 
