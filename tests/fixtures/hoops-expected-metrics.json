@@ -1,0 +1,190 @@
+{
+ "source_rows": "hoops-rows-2026-09-18.json",
+ "formulas": [
+  "Formulas are the ones the README documents:",
+  "  FG%        = 100 * made / attempts",
+  "  eFG% (v1)  = 100 * (made + 0.5 * swishes) / attempts        (README calls it a proxy; note it can exceed 100)",
+  "  swish rate = 100 * swishes / made",
+  "  best streak = longest run of consecutive \"made\" ordered by (captured_at, id)",
+  "  consistency = max(0, min(100, 100 - 2 * sample_stddev(FG% of every session with attempts > 0)))"
+ ],
+ "overall": {
+  "attempts": 95,
+  "made": 67,
+  "missed": 28,
+  "swishes": 9,
+  "fg_percent": 70.5,
+  "efg_percent": 75.3,
+  "swish_rate": 13.4,
+  "best_streak": 37,
+  "last_shot_at": "2026-09-18 19:40:06+00",
+  "consistency_raw_session_basis": 67.6,
+  "consistency_utc_day_basis": 85.9,
+  "avg_best_streak_raw_session_basis": 8.4,
+  "avg_best_streak_utc_day_basis": 10.3,
+  "sessions": 5,
+  "utc_days": 4,
+  "shots_before_2000": 23,
+  "shots_with_swish_null": 27,
+  "sessions_with_efg_over_100": [
+   "90000000-0000-4000-8000-000000000100"
+  ]
+ },
+ "per_utc_day": [
+  {
+   "day_id": "day-1970-01-01",
+   "utc_day": "1970-01-01",
+   "merged_sessions": [
+    "307ea354-0e4d-4479-b1d5-ea2a739c20d0"
+   ],
+   "device_ids": [
+    "shootit-ios-manual-test"
+   ],
+   "attempts": 23,
+   "made": 15,
+   "missed": 8,
+   "swishes": 2,
+   "fg_percent": 65.2,
+   "efg_percent": 69.6,
+   "swish_rate": 13.3,
+   "best_streak": 3,
+   "last_shot_at": "1970-01-01 01:59:43.76+00"
+  },
+  {
+   "day_id": "day-2026-04-15",
+   "utc_day": "2026-04-15",
+   "merged_sessions": [
+    "90000000-0000-4000-8000-000000000100",
+    "7ea7203b-18ff-4253-998f-1d7f6f0b933e"
+   ],
+   "device_ids": [
+    "frontend-backend-test",
+    "shootit-ios-manual-test"
+   ],
+   "attempts": 57,
+   "made": 43,
+   "missed": 14,
+   "swishes": 3,
+   "fg_percent": 75.4,
+   "efg_percent": 78.1,
+   "swish_rate": 7.0,
+   "best_streak": 30,
+   "last_shot_at": "2026-04-15 23:51:32.194+00"
+  },
+  {
+   "day_id": "day-2026-04-16",
+   "utc_day": "2026-04-16",
+   "merged_sessions": [
+    "4b42a996-54d0-4284-8e04-0731578b521b"
+   ],
+   "device_ids": [
+    "shootit-ios-manual-test"
+   ],
+   "attempts": 12,
+   "made": 7,
+   "missed": 5,
+   "swishes": 3,
+   "fg_percent": 58.3,
+   "efg_percent": 70.8,
+   "swish_rate": 42.9,
+   "best_streak": 7,
+   "last_shot_at": "2026-04-16 06:50:51.124+00"
+  },
+  {
+   "day_id": "day-2026-09-18",
+   "utc_day": "2026-09-18",
+   "merged_sessions": [
+    "eb38fbab-cde8-494a-8f54-dfe04509788a"
+   ],
+   "device_ids": [
+    "t11-sample"
+   ],
+   "attempts": 3,
+   "made": 2,
+   "missed": 1,
+   "swishes": 1,
+   "fg_percent": 66.7,
+   "efg_percent": 83.3,
+   "swish_rate": 50.0,
+   "best_streak": 1,
+   "last_shot_at": "2026-09-18 19:40:06+00"
+  }
+ ],
+ "per_session": [
+  {
+   "session_id": "307ea354-0e4d-4479-b1d5-ea2a739c20d0",
+   "device_id": "shootit-ios-manual-test",
+   "title": null,
+   "started_at": "1970-01-01 01:54:59.132+00",
+   "attempts": 23,
+   "made": 15,
+   "missed": 8,
+   "swishes": 2,
+   "fg_percent": 65.2,
+   "efg_percent": 69.6,
+   "swish_rate": 13.3,
+   "best_streak": 3,
+   "last_shot_at": "1970-01-01 01:59:43.76+00"
+  },
+  {
+   "session_id": "90000000-0000-4000-8000-000000000100",
+   "device_id": "frontend-backend-test",
+   "title": "Frontend Backend Smoke Test",
+   "started_at": "2026-04-15 05:10:00+00",
+   "attempts": 1,
+   "made": 1,
+   "missed": 0,
+   "swishes": 1,
+   "fg_percent": 100.0,
+   "efg_percent": 150.0,
+   "swish_rate": 100.0,
+   "best_streak": 1,
+   "last_shot_at": "2026-04-15 05:10:00+00"
+  },
+  {
+   "session_id": "7ea7203b-18ff-4253-998f-1d7f6f0b933e",
+   "device_id": "shootit-ios-manual-test",
+   "title": null,
+   "started_at": "2026-04-15 10:11:08.097+00",
+   "attempts": 56,
+   "made": 42,
+   "missed": 14,
+   "swishes": 2,
+   "fg_percent": 75.0,
+   "efg_percent": 76.8,
+   "swish_rate": 4.8,
+   "best_streak": 30,
+   "last_shot_at": "2026-04-15 23:51:32.194+00"
+  },
+  {
+   "session_id": "4b42a996-54d0-4284-8e04-0731578b521b",
+   "device_id": "shootit-ios-manual-test",
+   "title": null,
+   "started_at": "2026-04-16 06:50:29.019+00",
+   "attempts": 12,
+   "made": 7,
+   "missed": 5,
+   "swishes": 3,
+   "fg_percent": 58.3,
+   "efg_percent": 70.8,
+   "swish_rate": 42.9,
+   "best_streak": 7,
+   "last_shot_at": "2026-04-16 06:50:51.124+00"
+  },
+  {
+   "session_id": "eb38fbab-cde8-494a-8f54-dfe04509788a",
+   "device_id": "t11-sample",
+   "title": "T1.1 sample",
+   "started_at": "2026-09-18 19:40:00+00",
+   "attempts": 3,
+   "made": 2,
+   "missed": 1,
+   "swishes": 1,
+   "fg_percent": 66.7,
+   "efg_percent": 83.3,
+   "swish_rate": 50.0,
+   "best_streak": 1,
+   "last_shot_at": "2026-09-18 19:40:06+00"
+  }
+ ]
+}
