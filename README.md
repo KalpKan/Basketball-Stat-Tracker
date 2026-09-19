@@ -22,17 +22,20 @@ capture yet); today shots reach the backend through the ingest API described bel
 
 - A client (the future iPhone app, or any script) sends structured shot events to the Supabase Edge Function at `/functions/v1/hoops-ingest-shot`
 - The Edge Function validates the payload, verifies `x-device-api-key`, upserts the session row, and inserts the shot event idempotently by client event `id`
-- Supabase stores raw events in `hoops.shot_events` and computes dashboard-friendly metrics through SQL views in the `hoops` schema
-- The dashboard shows a yellow "Demo data" banner (with built-in sample shots) only when the Supabase settings are missing
-- The Next.js dashboard reads those analytics through a server-side API route and refreshes every 5 seconds
+- Supabase stores raw events in `hoops.shot_events`; SQL views in the `hoops` schema (`session_summaries` etc.) expose the same metrics for SQL consumers
+- The Next.js dashboard reads the raw sessions and shots through a server-side API route (`/api/dashboard`), computes every number in `apps/web/lib/dashboard-data.ts` (pure, unit-tested against an independent Python ground truth in `tests/`), and refreshes every 5 seconds
+- One row per device per UTC day: the ingest function reuses a device's session for the day, and the dashboard merges on the same key. Dates are formatted once on the server in UTC, so every visitor sees the same label on the pill, the chart and the table
+- Sessions or shots stamped before 2000-01-01 (a device with a broken clock) are hidden from every number; the page says how many were hidden. The ingest function now rejects such timestamps (and anything more than a day in the future) with `400`
+- The dashboard shows a yellow "Sample data" banner (built-in sample shots) when the Supabase settings are missing, and a red one when they are present but the database could not be reached. `/api/health` returns `{ok, db, service}` (`db: ok | skipped | error`, HTTP 503 on error) for the uptime monitor
 
 ## Backend notes
 
 - v1 auth is a shared ingest API key sent in `x-device-api-key` to the Edge Function
 - `id` is the canonical client event id and must be stable across retries for idempotent ingestion
-- `started_at` is set from the first accepted event in a session and is preserved on later uploads
-- `eFG%` is a v1 proxy: `((made + 0.5 * swishes) / attempts) * 100`
-- `consistency` is a practical score derived from session FG% variance: `max(0, min(100, 100 - 2 * stddev(session_fg_percent)))`
+- `started_at` is set from the first accepted event in a session and moves earlier if an earlier shot arrives later
+- `eFG%` is a bounded mini-hoop proxy (v2, 2026-09-18): `100 * (made + 0.5 * swishes) / (attempts + 0.5 * swishes)`. The v1 formula divided by `attempts` only and reached 150 % on a single swish
+- `consistency` is `max(0, min(100, 100 - 2 * sample_stddev(FG% of the sessions shown)))`, computed on the same rows as the Session History table; it is "n/a" for a single session
+- The dashboard reads at most the newest 200 sessions and their shots (10 pages of 1000); the `hoops.overall_analytics` view is no longer used by the page
 
 ## Required environment
 
@@ -57,7 +60,7 @@ itself and the settings are already in place.
 2. Open Terminal, go to this folder, and run `npx pnpm install`.
 3. Run `npx pnpm --filter @basketball-stat-tracker/web dev` and open http://localhost:3000.
    Without a `.env` file you will see the "Demo data" banner and sample shots, which is fine.
-4. To run the tests: `npx pnpm test`.
+4. To run the tests: `npx pnpm test` (unit tests for the metric math against `tests/fixtures/`, the chart, the banners and the ingest validation). To check the live page against the ground truth: `curl -s https://hoops.kalpkan.com/api/dashboard > /tmp/p.json && python3 tests/compute-expected-metrics.py --check /tmp/p.json`.
 
 **How to deploy this**
 

@@ -255,7 +255,7 @@ Expected aggregate result for that synthetic session:
 - made: `2`
 - missed: `1`
 - fg_percent: `66.7`
-- efg_percent: `83.3`
+- efg_percent: `71.4` (bounded v2 formula since 2026-09-18; the v1 proxy gave 83.3)
 - swish_rate: `50.0`
 - best_streak: `1`
 

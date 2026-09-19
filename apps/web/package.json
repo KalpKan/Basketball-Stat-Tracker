@@ -8,7 +8,7 @@
     "build": "next build",
     "lint": "next lint",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "test": "tsx --tsconfig tsconfig.test.json --test lib/*.test.ts components/*.test.tsx"
+    "test": "tsx --tsconfig tsconfig.test.json --test --test-timeout=20000 lib/*.test.ts components/*.test.tsx ../../supabase/functions/hoops-ingest-shot/validate.test.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.49.4",

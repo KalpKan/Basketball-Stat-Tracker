@@ -1,24 +1,11 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
+import { validateShotEvent, type ShotEventPayload } from "./validate.ts";
 
 const corsHeaders = {
   "access-control-allow-origin": "*",
   "access-control-allow-headers": "authorization, x-client-info, apikey, content-type, x-device-api-key",
   "access-control-allow-methods": "POST, OPTIONS"
 };
-
-interface ShotEventPayload {
-  id: string;
-  deviceId: string;
-  sessionId: string;
-  capturedAt: string;
-  result: "made" | "missed";
-  x: number;
-  y: number;
-  confidence: number;
-  frameId?: string | null;
-  swish?: boolean | null;
-  sessionTitle?: string | null;
-}
 
 function getUtcDayRange(isoTimestamp: string) {
   const capturedDate = new Date(isoTimestamp);
@@ -45,38 +32,7 @@ Deno.serve(async request => {
     return new Response("Method Not Allowed", { status: 405 });
   }
 
-  const body = (await request.json().catch(() => null)) as ShotEventPayload | null;
-  if (!body) {
-    return Response.json({ error: "Invalid JSON payload" }, { status: 400, headers: corsHeaders });
-  }
-
-  const requiredFields = ["id", "deviceId", "sessionId", "capturedAt", "result", "x", "y", "confidence"] as const;
-  for (const field of requiredFields) {
-    if (body[field] === undefined || body[field] === null) {
-      return Response.json({ error: `Missing field: ${field}` }, { status: 400, headers: corsHeaders });
-    }
-  }
-
-  if (!body.id.trim() || !body.deviceId.trim() || !body.sessionId.trim()) {
-    return Response.json({ error: "id, deviceId, and sessionId must be non-empty strings" }, { status: 400, headers: corsHeaders });
-  }
-
-  if (Number.isNaN(Date.parse(body.capturedAt))) {
-    return Response.json({ error: "capturedAt must be a valid ISO-8601 timestamp" }, { status: 400, headers: corsHeaders });
-  }
-
-  if (!["made", "missed"].includes(body.result)) {
-    return Response.json({ error: "Invalid result value" }, { status: 400, headers: corsHeaders });
-  }
-
-  if (body.x < 0 || body.x > 1 || body.y < 0 || body.y > 1) {
-    return Response.json({ error: "Shot coordinates must be normalized between 0 and 1" }, { status: 400, headers: corsHeaders });
-  }
-
-  if (body.confidence < 0 || body.confidence > 1) {
-    return Response.json({ error: "Confidence must be between 0 and 1" }, { status: 400, headers: corsHeaders });
-  }
-
+  // The key is checked before the body is read, so an unauthenticated caller learns nothing about the schema.
   const supabaseUrl = Deno.env.get("SUPABASE_URL");
   const supabaseServiceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
   const ingestApiKey = Deno.env.get("INGEST_API_KEY");
@@ -89,12 +45,21 @@ Deno.serve(async request => {
     return Response.json({ error: "Unauthorized" }, { status: 401, headers: corsHeaders });
   }
 
+  const rawBody = await request.json().catch(() => null);
+  // Timestamps before 2000 or more than a day ahead are rejected here so a device with a broken
+  // clock can never create another "1970" session on the dashboard.
+  const validationError = validateShotEvent(rawBody);
+  if (validationError) {
+    return Response.json({ error: validationError }, { status: 400, headers: corsHeaders });
+  }
+  const body = rawBody as ShotEventPayload;
+
   // Basketball lives in the "hoops" schema of the shared Supabase Project B.
   const supabase = createClient(supabaseUrl, supabaseServiceRoleKey, { db: { schema: "hoops" } });
   const dayRange = getUtcDayRange(body.capturedAt);
   const { data: existingSession, error: existingSessionError } = await supabase
     .from("sessions")
-    .select("id")
+    .select("id, started_at")
     .eq("device_id", body.deviceId)
     .gte("started_at", dayRange.start)
     .lt("started_at", dayRange.end)
@@ -113,6 +78,9 @@ Deno.serve(async request => {
         .from("sessions")
         .update({
           device_id: body.deviceId,
+          // a shot that arrives out of order can only move the start earlier, never later
+          started_at:
+            Date.parse(body.capturedAt) < Date.parse(existingSession.started_at) ? body.capturedAt : existingSession.started_at,
           updated_at: new Date().toISOString()
         })
         .eq("id", resolvedSessionId)

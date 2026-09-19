@@ -3,10 +3,16 @@ import { test } from "node:test";
 import { renderToStaticMarkup } from "react-dom/server";
 import { DemoDataBanner } from "./demo-data-banner";
 
-test("shows the Demo data banner when the dashboard is on mock data", () => {
+test("shows the sample-data banner with the settings hint when the Supabase env is missing", () => {
   const html = renderToStaticMarkup(<DemoDataBanner source="mock" />);
-  assert.match(html, /Demo data/);
+  assert.match(html, /Sample data/);
   assert.match(html, /SUPABASE_URL/);
+});
+
+test("shows an outage banner, without the settings hint, when the query failed", () => {
+  const html = renderToStaticMarkup(<DemoDataBanner source="mock" dataError="fetch failed" />);
+  assert.match(html, /could not be reached/);
+  assert.doesNotMatch(html, /SUPABASE_URL/);
 });
 
 test("renders nothing when the dashboard is on live data", () => {

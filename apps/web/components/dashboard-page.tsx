@@ -6,6 +6,8 @@ import { DemoDataBanner } from "./demo-data-banner";
 import { capture } from "../lib/posthog";
 import type { DashboardPayload, DashboardProgressPoint, ShotEvent } from "../lib/contracts";
 
+const REPO_URL = "https://github.com/KalpKan/Basketball-Stat-Tracker";
+
 type TabKey = "shot-map" | "analytics";
 type ChartMode = "fg" | "efg" | "streak";
 
@@ -68,7 +70,8 @@ export function DashboardPage({ initialData }: { initialData: DashboardPayload }
       made: match.made,
       missed: match.missed,
       fgPercent: match.fgPercent,
-      consistency: data.overview.consistency,
+      // one session has nothing to be consistent with
+      consistency: null,
       avgStreak: match.bestStreak,
       swishRate: match.swishRate
     };
@@ -84,15 +87,11 @@ export function DashboardPage({ initialData }: { initialData: DashboardPayload }
       return data.progress;
     }
 
-    return [
-      {
-        label: formatPillLabel(match.startedAt),
-        fgPercent: match.fgPercent,
-        efgPercent: match.efgPercent,
-        streak: match.bestStreak
-      }
-    ];
+    return data.progress.filter(point => point.sessionId === selectedSessionId);
   }, [data.progress, data.sessions, selectedSessionId]);
+
+  const sessionCount = filteredSessions.length;
+  const sessionBasis = `over ${sessionCount} session${sessionCount === 1 ? "" : "s"}`;
 
   const makes = filteredShotMap.filter(shot => shot.result === "made").length;
   const misses = filteredShotMap.filter(shot => shot.result === "missed").length;
@@ -110,7 +109,7 @@ export function DashboardPage({ initialData }: { initialData: DashboardPayload }
               </div>
               <div>
                 <h1 className="text-3xl font-semibold tracking-tight">Hoops Analytics</h1>
-                <p className="text-base text-white/40">Track your shooting performance</p>
+                <p className="text-base text-white/60">Mini-hoop shooting sessions, shot by shot</p>
               </div>
             </div>
             <div className="mt-8 flex gap-3">
@@ -122,13 +121,31 @@ export function DashboardPage({ initialData }: { initialData: DashboardPayload }
               </TabButton>
             </div>
           </div>
-          <div className="space-y-2 text-right">
-            <div className="text-sm text-white/40">{data.totalShotsRecorded} shots recorded</div>
+          <div className="space-y-2 md:text-right">
+            <div className="text-sm text-white/60">{data.overview.attempts} shots recorded</div>
             <LiveDataLabel source={data.source} />
           </div>
         </header>
 
-        <DemoDataBanner source={data.source} />
+        <p className="-mt-2 text-sm leading-6 text-white/60">
+          The iPhone capture app is not available yet. These sessions were recorded through the ingest API for
+          testing.{" "}
+          <a
+            href={REPO_URL}
+            className="text-green-300 underline decoration-green-300/40 underline-offset-4 hover:text-green-200"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Source and API on GitHub
+          </a>
+          {data.hiddenShots > 0 ? (
+            <span className="text-white/60">
+              {" "}· {data.hiddenShots} shot{data.hiddenShots === 1 ? "" : "s"} with an invalid timestamp hidden
+            </span>
+          ) : null}
+        </p>
+
+        <DemoDataBanner source={data.source} dataError={data.dataError} />
 
         <section className="flex gap-3 overflow-x-auto pb-2">
           <FilterPill
@@ -143,7 +160,8 @@ export function DashboardPage({ initialData }: { initialData: DashboardPayload }
             <FilterPill
               key={session.sessionId}
               active={selectedSessionId === session.sessionId}
-              label={formatPillLabel(session.startedAt)}
+              label={session.label}
+              title={session.title ?? session.deviceId}
               onClick={() => {
                 setSelectedSessionId(session.sessionId);
                 capture("session_viewed", { session: session.sessionId, attempts: session.attempts });
@@ -157,10 +175,18 @@ export function DashboardPage({ initialData }: { initialData: DashboardPayload }
             <section>
               <h2 className="mb-5 text-xl font-semibold">Overview</h2>
               <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-                <MetricCard label="Shots Made" value={String(selectedSummary.made)} meta={`of ${selectedSummary.attempts}`} />
-                <MetricCard label="Field Goal %" value={`${selectedSummary.fgPercent.toFixed(1)}%`} meta={`${selectedSummary.missed} misses`} accent />
-                <MetricCard label="Consistency" value={`${selectedSummary.consistency.toFixed(1)}%`} meta={`${selectedSummary.swishRate.toFixed(1)}% swish rate`} />
-                <MetricCard label="Avg Streak" value={selectedSummary.avgStreak.toFixed(1)} meta="makes in a row" />
+                <MetricCard label="Shots Made" value={String(selectedSummary.made)} meta={`of ${selectedSummary.attempts} attempts, ${sessionBasis}`} />
+                <MetricCard label="Field Goal %" value={`${selectedSummary.fgPercent.toFixed(1)}%`} meta={`${selectedSummary.missed} misses · ${selectedSummary.swishRate.toFixed(1)}% swish rate`} accent />
+                <MetricCard
+                  label="Consistency"
+                  value={selectedSummary.consistency === null ? "n/a" : `${selectedSummary.consistency.toFixed(1)}%`}
+                  meta={selectedSummary.consistency === null ? `needs 2 sessions (${sessionBasis})` : `100 − 2·σ of FG% ${sessionBasis}`}
+                />
+                <MetricCard
+                  label="Avg Streak"
+                  value={selectedSummary.avgStreak.toFixed(1)}
+                  meta={sessionCount === 1 ? "best run of makes in a row" : `avg of ${sessionCount} best streaks`}
+                />
               </div>
             </section>
 
@@ -168,7 +194,7 @@ export function DashboardPage({ initialData }: { initialData: DashboardPayload }
               <div className="mb-8 flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
                 <div>
                   <h2 className="text-2xl font-semibold">Progress</h2>
-                  <p className="mt-2 text-sm text-white/40">Track your improvement over time</p>
+                  <p className="mt-2 text-sm text-white/60">One bar per session, oldest to newest (dates in UTC)</p>
                 </div>
                 <div className="flex rounded-full bg-white/5 p-1 text-sm text-white/60 ring-1 ring-white/10">
                   <ChartToggle active={chartMode === "fg"} onClick={() => setChartMode("fg")}>FG%</ChartToggle>
@@ -184,29 +210,33 @@ export function DashboardPage({ initialData }: { initialData: DashboardPayload }
               <div className="mt-6 grid gap-6 md:grid-cols-2">
                 <InfoBlock title="Field Goal Percentage (FG%)" description="Ratio of made shots to attempted shots. The fundamental measure of shooting accuracy." />
                 <InfoBlock title="Swish Rate" description="Percentage of makes that went cleanly through the net without touching the rim." />
-                <InfoBlock title="Effective Field Goal % (eFG%)" description="For this mini-hoop build, swishes are weighted to reflect cleaner makes and better touch." />
-                <InfoBlock title="Consistency" description="A stability score based on how tightly clustered your session FG% values are over time." />
+                <InfoBlock title="Effective Field Goal % (eFG%)" description="Mini-hoop proxy: a swish counts as one and a half makes, and the bonus is added to the attempts too, so the score never passes 100%: (made + 0.5 × swishes) ÷ (attempts + 0.5 × swishes)." />
+                <InfoBlock title="Consistency" description="100 minus twice the sample standard deviation of the FG% of the sessions shown, so it is computed on the same rows as the Session History table. Needs at least two sessions." />
               </div>
             </section>
 
             <section className="rounded-[2rem] border border-white/10 bg-white/[0.02] p-6">
               <h2 className="text-2xl font-semibold">Session History</h2>
-              <div className="mt-6 overflow-hidden rounded-2xl border border-white/10">
-                <table className="w-full text-left text-sm">
-                  <thead className="bg-white/[0.03] text-white/45">
+              <div className="mt-6 overflow-x-auto rounded-2xl border border-white/10">
+                <table className="w-full min-w-[720px] text-left text-sm">
+                  <thead className="bg-white/[0.03] text-white/60">
                     <tr>
                       <th className="px-5 py-4 font-medium">Date</th>
+                      <th className="px-5 py-4 font-medium">Session</th>
                       <th className="px-5 py-4 font-medium">Attempts</th>
                       <th className="px-5 py-4 font-medium">Made</th>
                       <th className="px-5 py-4 font-medium">FG%</th>
-                      <th className="px-5 py-4 font-medium">EFG%</th>
+                      <th className="px-5 py-4 font-medium">eFG%</th>
                       <th className="px-5 py-4 font-medium">Best Streak</th>
                     </tr>
                   </thead>
                   <tbody>
                     {filteredSessions.map(session => (
                       <tr key={session.sessionId} className="border-t border-white/10">
-                        <td className="px-5 py-4 text-white">{formatTableDate(session.startedAt)}</td>
+                        <td className="whitespace-nowrap px-5 py-4 text-white">{session.dateLabel}</td>
+                        <td className="max-w-[16rem] truncate px-5 py-4 text-white/60" title={session.deviceId}>
+                          {session.title ?? session.deviceId}
+                        </td>
                         <td className="px-5 py-4 text-white/60">{session.attempts}</td>
                         <td className="px-5 py-4 text-white/60">{session.made}</td>
                         <td className="px-5 py-4 font-semibold text-white">{session.fgPercent.toFixed(1)}%</td>
@@ -224,9 +254,9 @@ export function DashboardPage({ initialData }: { initialData: DashboardPayload }
             <div className="mb-8 flex items-start justify-between gap-4">
               <div>
                 <h2 className="text-3xl font-semibold">Shot Map</h2>
-                <p className="mt-2 text-sm text-white/40">Top-down view of where shots landed in the basket</p>
+                <p className="mt-2 text-sm text-white/60">Top-down view of where shots landed in the basket</p>
               </div>
-              <div className="text-sm text-white/40">{filteredShotMap.length} tracked attempts</div>
+              <div className="text-sm text-white/60">{filteredShotMap.length} tracked attempts</div>
             </div>
             <div className="grid gap-8 lg:grid-cols-[1fr_280px]">
               <ShotMap shots={filteredShotMap} />
@@ -247,14 +277,14 @@ function LiveDataLabel({ source }: { source: DashboardPayload["source"] }) {
   const isLive = source === "live";
 
   return (
-    <div className="inline-flex items-center justify-end gap-2 rounded-full border border-white/10 bg-white/[0.04] px-3 py-2 text-xs uppercase tracking-[0.22em] text-white/35 shadow-[inset_0_1px_0_rgba(255,255,255,0.12)] backdrop-blur-xl">
+    <div className="inline-flex items-center justify-end gap-2 rounded-full border border-white/10 bg-white/[0.04] px-3 py-2 text-xs uppercase tracking-[0.22em] text-white/60 shadow-[inset_0_1px_0_rgba(255,255,255,0.12)] backdrop-blur-xl">
       {isLive ? (
-        <span className="relative flex h-2.5 w-2.5" aria-label="Live">
+        <span className="relative flex h-2.5 w-2.5" role="img" aria-label="Live">
           <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-500 opacity-70" />
           <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-red-500 shadow-[0_0_12px_rgba(239,68,68,0.8)]" />
         </span>
       ) : null}
-      <span>{source} data</span>
+      <span>{isLive ? "live data" : "sample data"}</span>
     </div>
   );
 }
@@ -286,15 +316,18 @@ function TabButton({
 function FilterPill({
   active,
   label,
+  title,
   onClick
 }: {
   active: boolean;
   label: string;
+  title?: string;
   onClick: () => void;
 }) {
   return (
     <button
       type="button"
+      title={title}
       onClick={onClick}
       className={`whitespace-nowrap rounded-full border px-5 py-3 text-sm shadow-[inset_0_1px_0_rgba(255,255,255,0.16),0_14px_42px_rgba(0,0,0,0.28)] backdrop-blur-xl transition ${
         active
@@ -324,7 +357,7 @@ function MetricCard({
         accent ? "border-green-500/40 bg-green-500/5" : "border-white/10 bg-white/[0.02]"
       }`}
     >
-      <p className="text-sm text-white/35">{label}</p>
+      <p className="text-sm text-white/60">{label}</p>
       <div className="mt-8 flex items-end justify-between gap-4">
         <div className="text-4xl font-semibold tracking-tight">{value}</div>
         {meta ? <div className="text-sm text-green-400">{meta}</div> : null}
@@ -346,14 +379,19 @@ function ChartToggle({
     <button
       type="button"
       onClick={onClick}
-      className={`rounded-full px-4 py-2 transition ${active ? "bg-white/10 text-white" : "text-white/55"}`}
+      className={`min-h-10 rounded-full px-4 py-2 transition ${active ? "bg-white/10 text-white" : "text-white/60"}`}
     >
       {children}
     </button>
   );
 }
 
-function ProgressChart({
+const PLOT_HEIGHT_PX = 208;
+const MIN_COLUMN_PX = 44;
+
+// Bars are sized in pixels from a fixed plot height. A percentage height inside an auto-height
+// flex column resolves to 0 px (the round-1 blocker), so nothing here uses percentage heights.
+export function ProgressChart({
   points,
   mode
 }: {
@@ -361,22 +399,80 @@ function ProgressChart({
   mode: ChartMode;
 }) {
   const values = points.map(point => getChartValue(point, mode));
-  const maxValue = Math.max(...values, 1);
+  const isPercent = mode !== "streak";
+  const axisMax = isPercent ? 100 : Math.max(1, ...values);
+  const ticks = isPercent ? [100, 75, 50, 25, 0] : [axisMax, Math.round(axisMax / 2), 0];
+  const format = (value: number) => (isPercent ? `${value.toFixed(1)}%` : String(value));
+  const unit = mode === "fg" ? "FG%" : mode === "efg" ? "eFG%" : "best streak";
+
+  if (points.length === 0) {
+    return (
+      <div className="flex h-72 items-center justify-center rounded-2xl border border-dashed border-white/10 bg-white/[0.025] text-sm text-white/60">
+        No sessions yet
+      </div>
+    );
+  }
 
   return (
-    <div className="h-72 rounded-2xl border border-dashed border-white/10 bg-white/[0.025] p-6">
-      <div className="flex h-full items-end gap-4">
-        {points.map(point => {
-          const value = getChartValue(point, mode);
-          const height = mode === "streak" ? (value / maxValue) * 100 : value;
-
-          return (
-            <div key={`${point.label}-${mode}`} className="flex flex-1 flex-col items-center gap-3">
-              <div className="w-full rounded-t-xl bg-green-500/75 shadow-[0_0_30px_rgba(35,197,82,0.18)]" style={{ height: `${Math.max(height, 12)}%` }} />
-              <span className="text-xs text-white/35">{point.label}</span>
+    <div className="rounded-2xl border border-dashed border-white/10 bg-white/[0.025] p-4 sm:p-6">
+      <div className="flex gap-3">
+        <div className="relative mt-5 w-10 shrink-0 text-right text-xs tabular-nums text-white/60" style={{ height: `${PLOT_HEIGHT_PX}px` }}>
+          {ticks.map(tick => (
+            <span
+              key={tick}
+              data-tick={String(tick)}
+              className="absolute right-0 -translate-y-1/2"
+              style={{ top: `${PLOT_HEIGHT_PX - (tick / axisMax) * PLOT_HEIGHT_PX}px` }}
+            >
+              {isPercent ? `${tick}%` : tick}
+            </span>
+          ))}
+        </div>
+        <div className="min-w-0 flex-1 overflow-x-auto pb-1 pt-5">
+          <div style={{ minWidth: `${points.length * MIN_COLUMN_PX}px` }}>
+            <div className="relative" style={{ height: `${PLOT_HEIGHT_PX}px` }}>
+              {ticks.map(tick => (
+                <div
+                  key={tick}
+                  aria-hidden="true"
+                  className={`absolute inset-x-0 border-t ${tick === 0 ? "border-white/25" : "border-dashed border-white/10"}`}
+                  style={{ top: `${PLOT_HEIGHT_PX - (tick / axisMax) * PLOT_HEIGHT_PX}px` }}
+                />
+              ))}
+              <div className="absolute inset-0 flex items-end gap-2">
+                {points.map((point, index) => {
+                  const value = values[index];
+                  const barPx = Math.max(2, Math.round((value / axisMax) * PLOT_HEIGHT_PX));
+                  return (
+                    <div key={`${point.sessionId}-${mode}`} className="flex flex-1 justify-center" style={{ minWidth: `${MIN_COLUMN_PX - 8}px` }}>
+                      <div className="relative w-full max-w-[56px]">
+                        <span className="absolute inset-x-0 -top-5 text-center text-[11px] tabular-nums text-white/85">{format(value)}</span>
+                        <div
+                          data-bar={point.sessionId}
+                          title={`${point.label}: ${format(value)} ${unit}`}
+                          className="w-full rounded-t bg-green-500/80 shadow-[0_0_30px_rgba(35,197,82,0.18)]"
+                          style={{ height: `${barPx}px` }}
+                        />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
-          );
-        })}
+            <div className="mt-2 flex gap-2">
+              {points.map(point => (
+                <span
+                  key={`${point.sessionId}-label`}
+                  className={`flex-1 truncate text-center text-white/60 ${points.length > 8 ? "text-[10px]" : "text-xs"}`}
+                  style={{ minWidth: `${MIN_COLUMN_PX - 8}px` }}
+                  title={point.label}
+                >
+                  {point.label}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -457,7 +553,7 @@ function StatTile({
   return (
     <div className="rounded-[1.5rem] border border-white/10 bg-white/[0.02] p-6">
       <div className={`text-5xl font-semibold tracking-tight ${toneClass}`}>{value}</div>
-      <div className="mt-2 text-sm text-white/45">{label}</div>
+      <div className="mt-2 text-sm text-white/60">{label}</div>
     </div>
   );
 }
@@ -466,7 +562,7 @@ function InfoBlock({ title, description }: { title: string; description: string 
   return (
     <div>
       <h3 className="text-base font-medium text-white">{title}</h3>
-      <p className="mt-2 text-sm leading-6 text-white/45">{description}</p>
+      <p className="mt-2 text-sm leading-6 text-white/60">{description}</p>
     </div>
   );
 }
@@ -475,12 +571,4 @@ function getChartValue(point: DashboardProgressPoint, mode: ChartMode) {
   if (mode === "efg") return point.efgPercent;
   if (mode === "streak") return point.streak;
   return point.fgPercent;
-}
-
-function formatPillLabel(dateValue: string) {
-  return new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric" }).format(new Date(dateValue));
-}
-
-function formatTableDate(dateValue: string) {
-  return new Intl.DateTimeFormat("en-US", { weekday: "short", month: "short", day: "numeric" }).format(new Date(dateValue));
 }
