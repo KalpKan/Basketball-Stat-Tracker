@@ -8,6 +8,8 @@ for the functional audit (`KalpKan/portfolio` `docs/reports/hoops-spec.md`).
 | `hoops-rows-2026-09-18.json` | Every row of `hoops.sessions` (5) and `hoops.shot_events` (95) in Supabase Project B on 2026-09-18. Device ids are test-device labels (`shootit-ios-manual-test`, `frontend-backend-test`, `t11-sample`), not people. | `../snapshot-hoops-rows.sh` (Management API SQL endpoint; needs `SUPABASE_ACCESS_TOKEN`) |
 | `hoops-expected-metrics.json` | Independent ground truth for those rows: per session, per UTC day (the dashboard's merge), and overall. FG%, eFG%, swish rate, best streak, consistency on both bases. | `../compute-expected-metrics.py` (pure Python, no SQL, no app code) |
 | `synthetic-tap-session.json` | The three-shot session from `docs/mobile-backend-handoff.md` with the aggregates that doc promises (3 / 2 / 1, FG 66.7, eFG 83.3, swish 50, streak 1). | copied from the handoff doc; verified live on 2026-09-18 as device `t11-sample` |
+| `synthetic-30-sessions.json` | 30 sessions on 30 distinct UTC days (June 2026, one test device, 801 shots), same shape as the snapshot. For the Progress chart "30 bars must not overflow" bar (spec story 3) and for feeding the pure functions in `apps/web/lib/dashboard-data.ts`. Every session's eFG% <= 100; no 1970 rows. Never sent to the database. | `../generate-synthetic-sessions.py` (seed 20260918, deterministic) |
+| `synthetic-30-expected-metrics.json` | Ground truth for the synthetic corpus (per session = per UTC day here, plus overall). | `../compute-expected-metrics.py --rows fixtures/synthetic-30-sessions.json --out fixtures/synthetic-30-expected-metrics.json` |
 
 ## Checking the live dashboard against the ground truth
 

@@ -1,0 +1,1055 @@
+{
+ "source_rows": "synthetic-30-sessions.json",
+ "formulas": [
+  "Formulas are the ones the README documents:",
+  "  FG%        = 100 * made / attempts",
+  "  eFG% (v1)  = 100 * (made + 0.5 * swishes) / attempts        (README calls it a proxy; note it can exceed 100)",
+  "  swish rate = 100 * swishes / made",
+  "  best streak = longest run of consecutive \"made\" ordered by (captured_at, id)",
+  "  consistency = max(0, min(100, 100 - 2 * sample_stddev(FG% of every session with attempts > 0)))"
+ ],
+ "overall": {
+  "attempts": 801,
+  "made": 430,
+  "missed": 371,
+  "swishes": 109,
+  "fg_percent": 53.7,
+  "efg_percent": 60.5,
+  "swish_rate": 25.3,
+  "best_streak": 9,
+  "last_shot_at": "2026-06-30 18:01:08.624+00",
+  "consistency_raw_session_basis": 72.1,
+  "consistency_utc_day_basis": 72.1,
+  "avg_best_streak_raw_session_basis": 4.7,
+  "avg_best_streak_utc_day_basis": 4.7,
+  "sessions": 30,
+  "utc_days": 30,
+  "shots_before_2000": 0,
+  "shots_with_swish_null": 0,
+  "sessions_with_efg_over_100": []
+ },
+ "per_utc_day": [
+  {
+   "day_id": "day-2026-06-01",
+   "utc_day": "2026-06-01",
+   "merged_sessions": [
+    "0cea11fd-9e2b-4866-a772-10c3de4670db"
+   ],
+   "device_ids": [
+    "synthetic-30-day-device"
+   ],
+   "attempts": 35,
+   "made": 18,
+   "missed": 17,
+   "swishes": 7,
+   "fg_percent": 51.4,
+   "efg_percent": 61.4,
+   "swish_rate": 38.9,
+   "best_streak": 5,
+   "last_shot_at": "2026-06-01 17:55:07.476+00"
+  },
+  {
+   "day_id": "day-2026-06-02",
+   "utc_day": "2026-06-02",
+   "merged_sessions": [
+    "d4a4f71d-c774-42c1-a53f-87f55dbab491"
+   ],
+   "device_ids": [
+    "synthetic-30-day-device"
+   ],
+   "attempts": 39,
+   "made": 25,
+   "missed": 14,
+   "swishes": 3,
+   "fg_percent": 64.1,
+   "efg_percent": 67.9,
+   "swish_rate": 12.0,
+   "best_streak": 9,
+   "last_shot_at": "2026-06-02 17:55:21.741+00"
+  },
+  {
+   "day_id": "day-2026-06-03",
+   "utc_day": "2026-06-03",
+   "merged_sessions": [
+    "c76470fa-977b-462d-a191-b574ac0bcbe9"
+   ],
+   "device_ids": [
+    "synthetic-30-day-device"
+   ],
+   "attempts": 28,
+   "made": 21,
+   "missed": 7,
+   "swishes": 5,
+   "fg_percent": 75.0,
+   "efg_percent": 83.9,
+   "swish_rate": 23.8,
+   "best_streak": 7,
+   "last_shot_at": "2026-06-03 18:01:55.471+00"
+  },
+  {
+   "day_id": "day-2026-06-04",
+   "utc_day": "2026-06-04",
+   "merged_sessions": [
+    "64f9ee64-3366-497d-8468-bdb9b69fc6be"
+   ],
+   "device_ids": [
+    "synthetic-30-day-device"
+   ],
+   "attempts": 8,
+   "made": 6,
+   "missed": 2,
+   "swishes": 3,
+   "fg_percent": 75.0,
+   "efg_percent": 93.8,
+   "swish_rate": 50.0,
+   "best_streak": 3,
+   "last_shot_at": "2026-06-04 17:39:04.433+00"
+  },
+  {
+   "day_id": "day-2026-06-05",
+   "utc_day": "2026-06-05",
+   "merged_sessions": [
+    "483ecbf3-1519-4e85-a42a-757fe815555e"
+   ],
+   "device_ids": [
+    "synthetic-30-day-device"
+   ],
+   "attempts": 31,
+   "made": 18,
+   "missed": 13,
+   "swishes": 5,
+   "fg_percent": 58.1,
+   "efg_percent": 66.1,
+   "swish_rate": 27.8,
+   "best_streak": 8,
+   "last_shot_at": "2026-06-05 18:31:46.358+00"
+  },
+  {
+   "day_id": "day-2026-06-06",
+   "utc_day": "2026-06-06",
+   "merged_sessions": [
+    "42978c39-6833-44e3-9760-e9843d1ddd10"
+   ],
+   "device_ids": [
+    "synthetic-30-day-device"
+   ],
+   "attempts": 26,
+   "made": 17,
+   "missed": 9,
+   "swishes": 5,
+   "fg_percent": 65.4,
+   "efg_percent": 75.0,
+   "swish_rate": 29.4,
+   "best_streak": 7,
+   "last_shot_at": "2026-06-06 18:02:56.978+00"
+  },
+  {
+   "day_id": "day-2026-06-07",
+   "utc_day": "2026-06-07",
+   "merged_sessions": [
+    "031a27de-b292-4a58-9464-30e7c1879f23"
+   ],
+   "device_ids": [
+    "synthetic-30-day-device"
+   ],
+   "attempts": 34,
+   "made": 25,
+   "missed": 9,
+   "swishes": 6,
+   "fg_percent": 73.5,
+   "efg_percent": 82.4,
+   "swish_rate": 24.0,
+   "best_streak": 8,
+   "last_shot_at": "2026-06-07 18:18:57.337+00"
+  },
+  {
+   "day_id": "day-2026-06-08",
+   "utc_day": "2026-06-08",
+   "merged_sessions": [
+    "13006341-48f6-4a22-a7ce-115df70b2640"
+   ],
+   "device_ids": [
+    "synthetic-30-day-device"
+   ],
+   "attempts": 32,
+   "made": 15,
+   "missed": 17,
+   "swishes": 3,
+   "fg_percent": 46.9,
+   "efg_percent": 51.6,
+   "swish_rate": 20.0,
+   "best_streak": 4,
+   "last_shot_at": "2026-06-08 17:46:56.285+00"
+  },
+  {
+   "day_id": "day-2026-06-09",
+   "utc_day": "2026-06-09",
+   "merged_sessions": [
+    "a492b700-f6ea-4dc8-8acc-fc4f495099ca"
+   ],
+   "device_ids": [
+    "synthetic-30-day-device"
+   ],
+   "attempts": 31,
+   "made": 11,
+   "missed": 20,
+   "swishes": 1,
+   "fg_percent": 35.5,
+   "efg_percent": 37.1,
+   "swish_rate": 9.1,
+   "best_streak": 4,
+   "last_shot_at": "2026-06-09 17:41:37.429+00"
+  },
+  {
+   "day_id": "day-2026-06-10",
+   "utc_day": "2026-06-10",
+   "merged_sessions": [
+    "8e17d07c-1802-4d36-bf73-1269177ab21b"
+   ],
+   "device_ids": [
+    "synthetic-30-day-device"
+   ],
+   "attempts": 14,
+   "made": 6,
+   "missed": 8,
+   "swishes": 1,
+   "fg_percent": 42.9,
+   "efg_percent": 46.4,
+   "swish_rate": 16.7,
+   "best_streak": 2,
+   "last_shot_at": "2026-06-10 18:03:16.266+00"
+  },
+  {
+   "day_id": "day-2026-06-11",
+   "utc_day": "2026-06-11",
+   "merged_sessions": [
+    "c70f353d-7bd4-4b3b-a92b-91d453e420fa"
+   ],
+   "device_ids": [
+    "synthetic-30-day-device"
+   ],
+   "attempts": 40,
+   "made": 17,
+   "missed": 23,
+   "swishes": 4,
+   "fg_percent": 42.5,
+   "efg_percent": 47.5,
+   "swish_rate": 23.5,
+   "best_streak": 3,
+   "last_shot_at": "2026-06-11 17:37:44.501+00"
+  },
+  {
+   "day_id": "day-2026-06-12",
+   "utc_day": "2026-06-12",
+   "merged_sessions": [
+    "234e775e-bc22-4b9e-a3aa-2782fcea3fe1"
+   ],
+   "device_ids": [
+    "synthetic-30-day-device"
+   ],
+   "attempts": 24,
+   "made": 9,
+   "missed": 15,
+   "swishes": 3,
+   "fg_percent": 37.5,
+   "efg_percent": 43.8,
+   "swish_rate": 33.3,
+   "best_streak": 2,
+   "last_shot_at": "2026-06-12 17:36:51.123+00"
+  },
+  {
+   "day_id": "day-2026-06-13",
+   "utc_day": "2026-06-13",
+   "merged_sessions": [
+    "998a5309-d077-4022-8e13-14cfa922644c"
+   ],
+   "device_ids": [
+    "synthetic-30-day-device"
+   ],
+   "attempts": 20,
+   "made": 9,
+   "missed": 11,
+   "swishes": 1,
+   "fg_percent": 45.0,
+   "efg_percent": 47.5,
+   "swish_rate": 11.1,
+   "best_streak": 3,
+   "last_shot_at": "2026-06-13 17:44:16.643+00"
+  },
+  {
+   "day_id": "day-2026-06-14",
+   "utc_day": "2026-06-14",
+   "merged_sessions": [
+    "e534787c-0331-481f-a657-5feff8efb706"
+   ],
+   "device_ids": [
+    "synthetic-30-day-device"
+   ],
+   "attempts": 10,
+   "made": 8,
+   "missed": 2,
+   "swishes": 4,
+   "fg_percent": 80.0,
+   "efg_percent": 100.0,
+   "swish_rate": 50.0,
+   "best_streak": 7,
+   "last_shot_at": "2026-06-14 17:24:49.493+00"
+  },
+  {
+   "day_id": "day-2026-06-15",
+   "utc_day": "2026-06-15",
+   "merged_sessions": [
+    "b48e7be2-d254-468c-9657-70fb718bbd1c"
+   ],
+   "device_ids": [
+    "synthetic-30-day-device"
+   ],
+   "attempts": 39,
+   "made": 16,
+   "missed": 23,
+   "swishes": 7,
+   "fg_percent": 41.0,
+   "efg_percent": 50.0,
+   "swish_rate": 43.8,
+   "best_streak": 4,
+   "last_shot_at": "2026-06-15 17:42:41.273+00"
+  },
+  {
+   "day_id": "day-2026-06-16",
+   "utc_day": "2026-06-16",
+   "merged_sessions": [
+    "a022b991-c6a6-4f5f-9e2d-48b9f50d847b"
+   ],
+   "device_ids": [
+    "synthetic-30-day-device"
+   ],
+   "attempts": 30,
+   "made": 20,
+   "missed": 10,
+   "swishes": 5,
+   "fg_percent": 66.7,
+   "efg_percent": 75.0,
+   "swish_rate": 25.0,
+   "best_streak": 4,
+   "last_shot_at": "2026-06-16 18:21:21.237+00"
+  },
+  {
+   "day_id": "day-2026-06-17",
+   "utc_day": "2026-06-17",
+   "merged_sessions": [
+    "ef44da59-75b1-470c-aa60-868b4f412ee3"
+   ],
+   "device_ids": [
+    "synthetic-30-day-device"
+   ],
+   "attempts": 34,
+   "made": 17,
+   "missed": 17,
+   "swishes": 3,
+   "fg_percent": 50.0,
+   "efg_percent": 54.4,
+   "swish_rate": 17.6,
+   "best_streak": 4,
+   "last_shot_at": "2026-06-17 18:04:49.718+00"
+  },
+  {
+   "day_id": "day-2026-06-18",
+   "utc_day": "2026-06-18",
+   "merged_sessions": [
+    "53a87c26-86e1-464c-aaf3-27025c169585"
+   ],
+   "device_ids": [
+    "synthetic-30-day-device"
+   ],
+   "attempts": 30,
+   "made": 11,
+   "missed": 19,
+   "swishes": 3,
+   "fg_percent": 36.7,
+   "efg_percent": 41.7,
+   "swish_rate": 27.3,
+   "best_streak": 3,
+   "last_shot_at": "2026-06-18 17:58:32.755+00"
+  },
+  {
+   "day_id": "day-2026-06-19",
+   "utc_day": "2026-06-19",
+   "merged_sessions": [
+    "72ca5881-46cf-40bc-9db5-dcd69148935f"
+   ],
+   "device_ids": [
+    "synthetic-30-day-device"
+   ],
+   "attempts": 34,
+   "made": 13,
+   "missed": 21,
+   "swishes": 5,
+   "fg_percent": 38.2,
+   "efg_percent": 45.6,
+   "swish_rate": 38.5,
+   "best_streak": 5,
+   "last_shot_at": "2026-06-19 18:42:45.368+00"
+  },
+  {
+   "day_id": "day-2026-06-20",
+   "utc_day": "2026-06-20",
+   "merged_sessions": [
+    "d5c59094-3428-40f9-baca-b98a7122cabf"
+   ],
+   "device_ids": [
+    "synthetic-30-day-device"
+   ],
+   "attempts": 40,
+   "made": 25,
+   "missed": 15,
+   "swishes": 6,
+   "fg_percent": 62.5,
+   "efg_percent": 70.0,
+   "swish_rate": 24.0,
+   "best_streak": 5,
+   "last_shot_at": "2026-06-20 18:42:49.913+00"
+  },
+  {
+   "day_id": "day-2026-06-21",
+   "utc_day": "2026-06-21",
+   "merged_sessions": [
+    "75e63591-e849-433b-8b3c-3c295c3ad2d8"
+   ],
+   "device_ids": [
+    "synthetic-30-day-device"
+   ],
+   "attempts": 36,
+   "made": 25,
+   "missed": 11,
+   "swishes": 7,
+   "fg_percent": 69.4,
+   "efg_percent": 79.2,
+   "swish_rate": 28.0,
+   "best_streak": 6,
+   "last_shot_at": "2026-06-21 18:02:30.703+00"
+  },
+  {
+   "day_id": "day-2026-06-22",
+   "utc_day": "2026-06-22",
+   "merged_sessions": [
+    "e1db5dd7-6331-432f-8a6e-ccbe9ab8d24d"
+   ],
+   "device_ids": [
+    "synthetic-30-day-device"
+   ],
+   "attempts": 8,
+   "made": 4,
+   "missed": 4,
+   "swishes": 2,
+   "fg_percent": 50.0,
+   "efg_percent": 62.5,
+   "swish_rate": 50.0,
+   "best_streak": 3,
+   "last_shot_at": "2026-06-22 18:00:10.861+00"
+  },
+  {
+   "day_id": "day-2026-06-23",
+   "utc_day": "2026-06-23",
+   "merged_sessions": [
+    "b2451f4e-040f-45c4-a22f-d1405849cbb4"
+   ],
+   "device_ids": [
+    "synthetic-30-day-device"
+   ],
+   "attempts": 29,
+   "made": 16,
+   "missed": 13,
+   "swishes": 3,
+   "fg_percent": 55.2,
+   "efg_percent": 60.3,
+   "swish_rate": 18.8,
+   "best_streak": 6,
+   "last_shot_at": "2026-06-23 17:58:47.885+00"
+  },
+  {
+   "day_id": "day-2026-06-24",
+   "utc_day": "2026-06-24",
+   "merged_sessions": [
+    "f595471b-875d-468a-aa22-e06308eec5a9"
+   ],
+   "device_ids": [
+    "synthetic-30-day-device"
+   ],
+   "attempts": 16,
+   "made": 10,
+   "missed": 6,
+   "swishes": 3,
+   "fg_percent": 62.5,
+   "efg_percent": 71.9,
+   "swish_rate": 30.0,
+   "best_streak": 5,
+   "last_shot_at": "2026-06-24 18:11:25.614+00"
+  },
+  {
+   "day_id": "day-2026-06-25",
+   "utc_day": "2026-06-25",
+   "merged_sessions": [
+    "182a4e42-44ec-4d38-81e5-5326d6e4e96c"
+   ],
+   "device_ids": [
+    "synthetic-30-day-device"
+   ],
+   "attempts": 34,
+   "made": 18,
+   "missed": 16,
+   "swishes": 3,
+   "fg_percent": 52.9,
+   "efg_percent": 57.4,
+   "swish_rate": 16.7,
+   "best_streak": 9,
+   "last_shot_at": "2026-06-25 18:37:26.222+00"
+  },
+  {
+   "day_id": "day-2026-06-26",
+   "utc_day": "2026-06-26",
+   "merged_sessions": [
+    "65b9a607-43bd-4ec0-a62a-ae5dcdcd1871"
+   ],
+   "device_ids": [
+    "synthetic-30-day-device"
+   ],
+   "attempts": 9,
+   "made": 4,
+   "missed": 5,
+   "swishes": 0,
+   "fg_percent": 44.4,
+   "efg_percent": 44.4,
+   "swish_rate": 0.0,
+   "best_streak": 1,
+   "last_shot_at": "2026-06-26 17:44:45.965+00"
+  },
+  {
+   "day_id": "day-2026-06-27",
+   "utc_day": "2026-06-27",
+   "merged_sessions": [
+    "9ce6902d-a68d-4888-8162-8424eaa6a351"
+   ],
+   "device_ids": [
+    "synthetic-30-day-device"
+   ],
+   "attempts": 20,
+   "made": 9,
+   "missed": 11,
+   "swishes": 2,
+   "fg_percent": 45.0,
+   "efg_percent": 50.0,
+   "swish_rate": 22.2,
+   "best_streak": 3,
+   "last_shot_at": "2026-06-27 18:08:53.921+00"
+  },
+  {
+   "day_id": "day-2026-06-28",
+   "utc_day": "2026-06-28",
+   "merged_sessions": [
+    "940ec229-1513-493d-837a-8505f58273de"
+   ],
+   "device_ids": [
+    "synthetic-30-day-device"
+   ],
+   "attempts": 40,
+   "made": 26,
+   "missed": 14,
+   "swishes": 8,
+   "fg_percent": 65.0,
+   "efg_percent": 75.0,
+   "swish_rate": 30.8,
+   "best_streak": 9,
+   "last_shot_at": "2026-06-28 17:49:40.903+00"
+  },
+  {
+   "day_id": "day-2026-06-29",
+   "utc_day": "2026-06-29",
+   "merged_sessions": [
+    "09bdf127-3e0b-4b90-9c00-51af757ad68b"
+   ],
+   "device_ids": [
+    "synthetic-30-day-device"
+   ],
+   "attempts": 14,
+   "made": 7,
+   "missed": 7,
+   "swishes": 0,
+   "fg_percent": 50.0,
+   "efg_percent": 50.0,
+   "swish_rate": 0.0,
+   "best_streak": 2,
+   "last_shot_at": "2026-06-29 17:27:51.704+00"
+  },
+  {
+   "day_id": "day-2026-06-30",
+   "utc_day": "2026-06-30",
+   "merged_sessions": [
+    "87090e0e-660f-4872-b9a5-830c32285e60"
+   ],
+   "device_ids": [
+    "synthetic-30-day-device"
+   ],
+   "attempts": 16,
+   "made": 4,
+   "missed": 12,
+   "swishes": 1,
+   "fg_percent": 25.0,
+   "efg_percent": 28.1,
+   "swish_rate": 25.0,
+   "best_streak": 1,
+   "last_shot_at": "2026-06-30 18:01:08.624+00"
+  }
+ ],
+ "per_session": [
+  {
+   "session_id": "0cea11fd-9e2b-4866-a772-10c3de4670db",
+   "device_id": "synthetic-30-day-device",
+   "title": "Synthetic day 01",
+   "started_at": "2026-06-01 17:39:00.000+00",
+   "attempts": 35,
+   "made": 18,
+   "missed": 17,
+   "swishes": 7,
+   "fg_percent": 51.4,
+   "efg_percent": 61.4,
+   "swish_rate": 38.9,
+   "best_streak": 5,
+   "last_shot_at": "2026-06-01 17:55:07.476+00"
+  },
+  {
+   "session_id": "d4a4f71d-c774-42c1-a53f-87f55dbab491",
+   "device_id": "synthetic-30-day-device",
+   "title": "Synthetic day 02",
+   "started_at": "2026-06-02 17:40:00.000+00",
+   "attempts": 39,
+   "made": 25,
+   "missed": 14,
+   "swishes": 3,
+   "fg_percent": 64.1,
+   "efg_percent": 67.9,
+   "swish_rate": 12.0,
+   "best_streak": 9,
+   "last_shot_at": "2026-06-02 17:55:21.741+00"
+  },
+  {
+   "session_id": "c76470fa-977b-462d-a191-b574ac0bcbe9",
+   "device_id": "synthetic-30-day-device",
+   "title": "Synthetic day 03",
+   "started_at": "2026-06-03 17:50:00.000+00",
+   "attempts": 28,
+   "made": 21,
+   "missed": 7,
+   "swishes": 5,
+   "fg_percent": 75.0,
+   "efg_percent": 83.9,
+   "swish_rate": 23.8,
+   "best_streak": 7,
+   "last_shot_at": "2026-06-03 18:01:55.471+00"
+  },
+  {
+   "session_id": "64f9ee64-3366-497d-8468-bdb9b69fc6be",
+   "device_id": "synthetic-30-day-device",
+   "title": "Synthetic day 04",
+   "started_at": "2026-06-04 17:36:00.000+00",
+   "attempts": 8,
+   "made": 6,
+   "missed": 2,
+   "swishes": 3,
+   "fg_percent": 75.0,
+   "efg_percent": 93.8,
+   "swish_rate": 50.0,
+   "best_streak": 3,
+   "last_shot_at": "2026-06-04 17:39:04.433+00"
+  },
+  {
+   "session_id": "483ecbf3-1519-4e85-a42a-757fe815555e",
+   "device_id": "synthetic-30-day-device",
+   "title": "Synthetic day 05",
+   "started_at": "2026-06-05 18:19:00.000+00",
+   "attempts": 31,
+   "made": 18,
+   "missed": 13,
+   "swishes": 5,
+   "fg_percent": 58.1,
+   "efg_percent": 66.1,
+   "swish_rate": 27.8,
+   "best_streak": 8,
+   "last_shot_at": "2026-06-05 18:31:46.358+00"
+  },
+  {
+   "session_id": "42978c39-6833-44e3-9760-e9843d1ddd10",
+   "device_id": "synthetic-30-day-device",
+   "title": "Synthetic day 06",
+   "started_at": "2026-06-06 17:53:00.000+00",
+   "attempts": 26,
+   "made": 17,
+   "missed": 9,
+   "swishes": 5,
+   "fg_percent": 65.4,
+   "efg_percent": 75.0,
+   "swish_rate": 29.4,
+   "best_streak": 7,
+   "last_shot_at": "2026-06-06 18:02:56.978+00"
+  },
+  {
+   "session_id": "031a27de-b292-4a58-9464-30e7c1879f23",
+   "device_id": "synthetic-30-day-device",
+   "title": "Synthetic day 07",
+   "started_at": "2026-06-07 18:06:00.000+00",
+   "attempts": 34,
+   "made": 25,
+   "missed": 9,
+   "swishes": 6,
+   "fg_percent": 73.5,
+   "efg_percent": 82.4,
+   "swish_rate": 24.0,
+   "best_streak": 8,
+   "last_shot_at": "2026-06-07 18:18:57.337+00"
+  },
+  {
+   "session_id": "13006341-48f6-4a22-a7ce-115df70b2640",
+   "device_id": "synthetic-30-day-device",
+   "title": "Synthetic day 08",
+   "started_at": "2026-06-08 17:34:00.000+00",
+   "attempts": 32,
+   "made": 15,
+   "missed": 17,
+   "swishes": 3,
+   "fg_percent": 46.9,
+   "efg_percent": 51.6,
+   "swish_rate": 20.0,
+   "best_streak": 4,
+   "last_shot_at": "2026-06-08 17:46:56.285+00"
+  },
+  {
+   "session_id": "a492b700-f6ea-4dc8-8acc-fc4f495099ca",
+   "device_id": "synthetic-30-day-device",
+   "title": "Synthetic day 09",
+   "started_at": "2026-06-09 17:29:00.000+00",
+   "attempts": 31,
+   "made": 11,
+   "missed": 20,
+   "swishes": 1,
+   "fg_percent": 35.5,
+   "efg_percent": 37.1,
+   "swish_rate": 9.1,
+   "best_streak": 4,
+   "last_shot_at": "2026-06-09 17:41:37.429+00"
+  },
+  {
+   "session_id": "8e17d07c-1802-4d36-bf73-1269177ab21b",
+   "device_id": "synthetic-30-day-device",
+   "title": "Synthetic day 10",
+   "started_at": "2026-06-10 17:57:00.000+00",
+   "attempts": 14,
+   "made": 6,
+   "missed": 8,
+   "swishes": 1,
+   "fg_percent": 42.9,
+   "efg_percent": 46.4,
+   "swish_rate": 16.7,
+   "best_streak": 2,
+   "last_shot_at": "2026-06-10 18:03:16.266+00"
+  },
+  {
+   "session_id": "c70f353d-7bd4-4b3b-a92b-91d453e420fa",
+   "device_id": "synthetic-30-day-device",
+   "title": "Synthetic day 11",
+   "started_at": "2026-06-11 17:21:00.000+00",
+   "attempts": 40,
+   "made": 17,
+   "missed": 23,
+   "swishes": 4,
+   "fg_percent": 42.5,
+   "efg_percent": 47.5,
+   "swish_rate": 23.5,
+   "best_streak": 3,
+   "last_shot_at": "2026-06-11 17:37:44.501+00"
+  },
+  {
+   "session_id": "234e775e-bc22-4b9e-a3aa-2782fcea3fe1",
+   "device_id": "synthetic-30-day-device",
+   "title": "Synthetic day 12",
+   "started_at": "2026-06-12 17:27:00.000+00",
+   "attempts": 24,
+   "made": 9,
+   "missed": 15,
+   "swishes": 3,
+   "fg_percent": 37.5,
+   "efg_percent": 43.8,
+   "swish_rate": 33.3,
+   "best_streak": 2,
+   "last_shot_at": "2026-06-12 17:36:51.123+00"
+  },
+  {
+   "session_id": "998a5309-d077-4022-8e13-14cfa922644c",
+   "device_id": "synthetic-30-day-device",
+   "title": "Synthetic day 13",
+   "started_at": "2026-06-13 17:36:00.000+00",
+   "attempts": 20,
+   "made": 9,
+   "missed": 11,
+   "swishes": 1,
+   "fg_percent": 45.0,
+   "efg_percent": 47.5,
+   "swish_rate": 11.1,
+   "best_streak": 3,
+   "last_shot_at": "2026-06-13 17:44:16.643+00"
+  },
+  {
+   "session_id": "e534787c-0331-481f-a657-5feff8efb706",
+   "device_id": "synthetic-30-day-device",
+   "title": "Synthetic day 14",
+   "started_at": "2026-06-14 17:21:00.000+00",
+   "attempts": 10,
+   "made": 8,
+   "missed": 2,
+   "swishes": 4,
+   "fg_percent": 80.0,
+   "efg_percent": 100.0,
+   "swish_rate": 50.0,
+   "best_streak": 7,
+   "last_shot_at": "2026-06-14 17:24:49.493+00"
+  },
+  {
+   "session_id": "b48e7be2-d254-468c-9657-70fb718bbd1c",
+   "device_id": "synthetic-30-day-device",
+   "title": "Synthetic day 15",
+   "started_at": "2026-06-15 17:28:00.000+00",
+   "attempts": 39,
+   "made": 16,
+   "missed": 23,
+   "swishes": 7,
+   "fg_percent": 41.0,
+   "efg_percent": 50.0,
+   "swish_rate": 43.8,
+   "best_streak": 4,
+   "last_shot_at": "2026-06-15 17:42:41.273+00"
+  },
+  {
+   "session_id": "a022b991-c6a6-4f5f-9e2d-48b9f50d847b",
+   "device_id": "synthetic-30-day-device",
+   "title": "Synthetic day 16",
+   "started_at": "2026-06-16 18:10:00.000+00",
+   "attempts": 30,
+   "made": 20,
+   "missed": 10,
+   "swishes": 5,
+   "fg_percent": 66.7,
+   "efg_percent": 75.0,
+   "swish_rate": 25.0,
+   "best_streak": 4,
+   "last_shot_at": "2026-06-16 18:21:21.237+00"
+  },
+  {
+   "session_id": "ef44da59-75b1-470c-aa60-868b4f412ee3",
+   "device_id": "synthetic-30-day-device",
+   "title": "Synthetic day 17",
+   "started_at": "2026-06-17 17:51:00.000+00",
+   "attempts": 34,
+   "made": 17,
+   "missed": 17,
+   "swishes": 3,
+   "fg_percent": 50.0,
+   "efg_percent": 54.4,
+   "swish_rate": 17.6,
+   "best_streak": 4,
+   "last_shot_at": "2026-06-17 18:04:49.718+00"
+  },
+  {
+   "session_id": "53a87c26-86e1-464c-aaf3-27025c169585",
+   "device_id": "synthetic-30-day-device",
+   "title": "Synthetic day 18",
+   "started_at": "2026-06-18 17:46:00.000+00",
+   "attempts": 30,
+   "made": 11,
+   "missed": 19,
+   "swishes": 3,
+   "fg_percent": 36.7,
+   "efg_percent": 41.7,
+   "swish_rate": 27.3,
+   "best_streak": 3,
+   "last_shot_at": "2026-06-18 17:58:32.755+00"
+  },
+  {
+   "session_id": "72ca5881-46cf-40bc-9db5-dcd69148935f",
+   "device_id": "synthetic-30-day-device",
+   "title": "Synthetic day 19",
+   "started_at": "2026-06-19 18:30:00.000+00",
+   "attempts": 34,
+   "made": 13,
+   "missed": 21,
+   "swishes": 5,
+   "fg_percent": 38.2,
+   "efg_percent": 45.6,
+   "swish_rate": 38.5,
+   "best_streak": 5,
+   "last_shot_at": "2026-06-19 18:42:45.368+00"
+  },
+  {
+   "session_id": "d5c59094-3428-40f9-baca-b98a7122cabf",
+   "device_id": "synthetic-30-day-device",
+   "title": "Synthetic day 20",
+   "started_at": "2026-06-20 18:26:00.000+00",
+   "attempts": 40,
+   "made": 25,
+   "missed": 15,
+   "swishes": 6,
+   "fg_percent": 62.5,
+   "efg_percent": 70.0,
+   "swish_rate": 24.0,
+   "best_streak": 5,
+   "last_shot_at": "2026-06-20 18:42:49.913+00"
+  },
+  {
+   "session_id": "75e63591-e849-433b-8b3c-3c295c3ad2d8",
+   "device_id": "synthetic-30-day-device",
+   "title": "Synthetic day 21",
+   "started_at": "2026-06-21 17:47:00.000+00",
+   "attempts": 36,
+   "made": 25,
+   "missed": 11,
+   "swishes": 7,
+   "fg_percent": 69.4,
+   "efg_percent": 79.2,
+   "swish_rate": 28.0,
+   "best_streak": 6,
+   "last_shot_at": "2026-06-21 18:02:30.703+00"
+  },
+  {
+   "session_id": "e1db5dd7-6331-432f-8a6e-ccbe9ab8d24d",
+   "device_id": "synthetic-30-day-device",
+   "title": "Synthetic day 22",
+   "started_at": "2026-06-22 17:57:00.000+00",
+   "attempts": 8,
+   "made": 4,
+   "missed": 4,
+   "swishes": 2,
+   "fg_percent": 50.0,
+   "efg_percent": 62.5,
+   "swish_rate": 50.0,
+   "best_streak": 3,
+   "last_shot_at": "2026-06-22 18:00:10.861+00"
+  },
+  {
+   "session_id": "b2451f4e-040f-45c4-a22f-d1405849cbb4",
+   "device_id": "synthetic-30-day-device",
+   "title": "Synthetic day 23",
+   "started_at": "2026-06-23 17:49:00.000+00",
+   "attempts": 29,
+   "made": 16,
+   "missed": 13,
+   "swishes": 3,
+   "fg_percent": 55.2,
+   "efg_percent": 60.3,
+   "swish_rate": 18.8,
+   "best_streak": 6,
+   "last_shot_at": "2026-06-23 17:58:47.885+00"
+  },
+  {
+   "session_id": "f595471b-875d-468a-aa22-e06308eec5a9",
+   "device_id": "synthetic-30-day-device",
+   "title": "Synthetic day 24",
+   "started_at": "2026-06-24 18:05:00.000+00",
+   "attempts": 16,
+   "made": 10,
+   "missed": 6,
+   "swishes": 3,
+   "fg_percent": 62.5,
+   "efg_percent": 71.9,
+   "swish_rate": 30.0,
+   "best_streak": 5,
+   "last_shot_at": "2026-06-24 18:11:25.614+00"
+  },
+  {
+   "session_id": "182a4e42-44ec-4d38-81e5-5326d6e4e96c",
+   "device_id": "synthetic-30-day-device",
+   "title": "Synthetic day 25",
+   "started_at": "2026-06-25 18:23:00.000+00",
+   "attempts": 34,
+   "made": 18,
+   "missed": 16,
+   "swishes": 3,
+   "fg_percent": 52.9,
+   "efg_percent": 57.4,
+   "swish_rate": 16.7,
+   "best_streak": 9,
+   "last_shot_at": "2026-06-25 18:37:26.222+00"
+  },
+  {
+   "session_id": "65b9a607-43bd-4ec0-a62a-ae5dcdcd1871",
+   "device_id": "synthetic-30-day-device",
+   "title": "Synthetic day 26",
+   "started_at": "2026-06-26 17:41:00.000+00",
+   "attempts": 9,
+   "made": 4,
+   "missed": 5,
+   "swishes": 0,
+   "fg_percent": 44.4,
+   "efg_percent": 44.4,
+   "swish_rate": 0.0,
+   "best_streak": 1,
+   "last_shot_at": "2026-06-26 17:44:45.965+00"
+  },
+  {
+   "session_id": "9ce6902d-a68d-4888-8162-8424eaa6a351",
+   "device_id": "synthetic-30-day-device",
+   "title": "Synthetic day 27",
+   "started_at": "2026-06-27 18:01:00.000+00",
+   "attempts": 20,
+   "made": 9,
+   "missed": 11,
+   "swishes": 2,
+   "fg_percent": 45.0,
+   "efg_percent": 50.0,
+   "swish_rate": 22.2,
+   "best_streak": 3,
+   "last_shot_at": "2026-06-27 18:08:53.921+00"
+  },
+  {
+   "session_id": "940ec229-1513-493d-837a-8505f58273de",
+   "device_id": "synthetic-30-day-device",
+   "title": "Synthetic day 28",
+   "started_at": "2026-06-28 17:34:00.000+00",
+   "attempts": 40,
+   "made": 26,
+   "missed": 14,
+   "swishes": 8,
+   "fg_percent": 65.0,
+   "efg_percent": 75.0,
+   "swish_rate": 30.8,
+   "best_streak": 9,
+   "last_shot_at": "2026-06-28 17:49:40.903+00"
+  },
+  {
+   "session_id": "09bdf127-3e0b-4b90-9c00-51af757ad68b",
+   "device_id": "synthetic-30-day-device",
+   "title": "Synthetic day 29",
+   "started_at": "2026-06-29 17:22:00.000+00",
+   "attempts": 14,
+   "made": 7,
+   "missed": 7,
+   "swishes": 0,
+   "fg_percent": 50.0,
+   "efg_percent": 50.0,
+   "swish_rate": 0.0,
+   "best_streak": 2,
+   "last_shot_at": "2026-06-29 17:27:51.704+00"
+  },
+  {
+   "session_id": "87090e0e-660f-4872-b9a5-830c32285e60",
+   "device_id": "synthetic-30-day-device",
+   "title": "Synthetic day 30",
+   "started_at": "2026-06-30 17:55:00.000+00",
+   "attempts": 16,
+   "made": 4,
+   "missed": 12,
+   "swishes": 1,
+   "fg_percent": 25.0,
+   "efg_percent": 28.1,
+   "swish_rate": 25.0,
+   "best_streak": 1,
+   "last_shot_at": "2026-06-30 18:01:08.624+00"
+  }
+ ]
+}

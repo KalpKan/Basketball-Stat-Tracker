@@ -3,6 +3,7 @@
 
   python3 tests/compute-expected-metrics.py                  # rewrite tests/fixtures/hoops-expected-metrics.json
   python3 tests/compute-expected-metrics.py --check payload.json   # compare a saved /api/dashboard payload
+  python3 tests/compute-expected-metrics.py --rows tests/fixtures/synthetic-30-sessions.json --out tests/fixtures/synthetic-30-expected-metrics.json
 
 Formulas are the ones the README documents:
   FG%        = 100 * made / attempts
@@ -99,7 +100,7 @@ def compute(rows):
         "shots_with_swish_null": sum(e.get("swish") is None for e in rows["shot_events"]),
         "sessions_with_efg_over_100": [s["session_id"] for s in per_session if s["efg_percent"] > 100],
     })
-    return {"source_rows": os.path.basename(ROWS), "formulas": __doc__.strip().splitlines()[5:11],
+    return {"source_rows": os.path.basename(ROWS), "formulas": [l for l in __doc__.splitlines() if l.startswith("Formulas") or l.startswith("  FG%") or l.startswith("  eFG%") or l.startswith("  swish") or l.startswith("  best") or l.startswith("  consistency")],
             "overall": overall, "per_utc_day": per_day, "per_session": per_session}
 
 
@@ -133,10 +134,15 @@ def check(expected, payload_path):
 
 
 if __name__ == "__main__":
+    args = sys.argv[1:]
+    if "--rows" in args:
+        ROWS = args[args.index("--rows") + 1]
+    if "--out" in args:
+        OUT = args[args.index("--out") + 1]
     rows = json.load(open(ROWS))
     expected = compute(rows)
-    if len(sys.argv) > 2 and sys.argv[1] == "--check":
-        sys.exit(check(expected, sys.argv[2]))
+    if "--check" in args:
+        sys.exit(check(expected, args[args.index("--check") + 1]))
     json.dump(expected, open(OUT, "w"), indent=1)
     print(f"wrote {OUT}")
     print(json.dumps(expected["overall"], indent=1))
